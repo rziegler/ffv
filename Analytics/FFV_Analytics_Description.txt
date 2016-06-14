@@ -1,0 +1,74 @@
+Hallo Rudi
+
+Anbei noch meine (Zwischen-)Ergebnisse aus der Datenanalyse.
+
+Die Analyse der Flugdaten hat sich als aufwändiger und intensiver herausgestellt, als ich angenommen hatte.
+
+Hier nochmals die Datenstruktur aus der Datenbank:
+
+FLIGHT			--- flies on --->	DATE			--- costs --->	PRICE			--- offered by ---> AGENT
+Flight Number						Departure Date					Price								Agent Name
+Carrier								Arrival Date					Request Date						Agent Type
+Number								Duration						Request Source						Agent ImageURL
+Origin																Request Daytime
+Destination
+
+
+Anbei eine kleine Chronologie zu den einzelnen Schritten:
+
+Part 1. FFV_Analytics.R, FFV_Analytics_Extended.R und FFV_Analytics_Extended2.R
+
+In diesen 3 R-Scripts habe ich versucht den Shift auf die relative Zeitebene zu vollbringen und eine Korrelation der 
+Flugpreise herzustellen. Jedoch habe ich in diesem Schritt die Daten wohl zu stark zusammengefasst, so dass ich am Ende feststellen musste, dass keine
+Aussage bezüglich der Flugpreise mehr möglich ist (es erscheint zufällig).
+
+vgl. histogram-all.png, histogram-delta-weekday.png und histogram-departureday.png
+
+- FFV_Analytics.R, liest die Daten aus der neo4j-Datenbank ein und transformiert die Daten.
+- FFV_Analytics_Extended.R, verwendet als Input die Daten aus FFV_Analytics.R (DB-Abfrage in FFV_Analytics.R ist langsam) und visualisiert die Preise der relativen Datumsebene (Delta Tage vor Abflug) in einem Histogramm.
+- FFV_Analytics_Extended2.R, funktioniert analog wie FFV_Analytics_Extended.R, visualisiert jedoch die Daten nach Abflugtag (absolute Datumsebene).
+
+
+
+Part 2. FFV_Analytics_Base.R, FFV_Analytics_Data.R und FFV_Analytics_Report.R
+
+Nach den Ergebnissen aus 1. habe ich nochmals von vorne begonnen. Meine Fragestellung habe ich überdenkt und mich entschieden, die Korrelation etwas früher zu suchen.
+Das Ziel ist nun gewesen, die Daten so aufzubereiten, dass für jeden Flug pro Abfragetag mindestens eine Abfrage mit einem Preis vorhanden ist. 
+
+Ich frage ja 4x täglich die Preise ab, manchmal werden jedoch nicht alle Flüge geliefert. Ausserdem liefert das Skyscanner API (der Dienst wo ich die Flüge anfrage) 
+für den gleichen Flug mehrere Preisangebote von unterschiedlichen Agenten. In einem ersten Schritt habe ich mich auf 1 Agenten (eDreams) konzentriert. 
+
+Zudem habe ich mich entschieden, die Skripte etwas aufzuteilen um eine bessere Übersicht zu erhalten:
+
+- FFV_Analytics_Base.R, definierte die nötigen Libraries und Funktionen.
+- FFV_Analytics_Data.R, liest die rohen Daten ein und erzeugt Tidy Data für die weitere Verwendung.
+- FFV_Analytics_Report.R, erzeugt Visualisierungen der Tidy Data um die Aussagekraft der Daten zu prüfen.
+
+
+
+
+Die Ergebnisse der Visualisierungen sind in ffv-reports-01.pdf und ffv-reports-02.pdf ersichtlich. Für mich sind in diesen Visualisierungen Muster zu erkennen, 
+so dass ich glaube mit den Daten "data.flights.grouped" eine gute Grundlage für weitere Analysen zu haben.
+
+Meine nächsten Schritte:
+- Fragestellungen überdenken und entsprechende Datenanalyse
+- Normalisierung der Preise, so dass Vergleiche zwischen unterschiedlichen Flugverbindungen möglich werden
+
+Offene Punkte:
+- Soll mit dem Mean oder dem Median gearbeitet werden?
+- Wie soll mit den unterschiedlichen Agenten umgegangen werden?
+  (Filtern auf einen bestimmten, so wies momentan der Fall ist? Wiederum den Mean rechnen innerhalb eines Fluges?)
+  
+  vgl Beispiel LX316 mit Abflug am 28.07. mit Anfragedatum am 01.06.
+  
+
+
+Vielleicht kannst du zu meinen offenen Punkten mit deinem Statistik-Wissen weiterhelfen?
+
+
+Merci für dein Feedback & Gruss
+Ruth
+
+
+
+

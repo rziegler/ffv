@@ -1,0 +1,26 @@
+             CAS Data Visualization
+AUTORENPROJEKT "FFV - Flight Fare Visualization"
+................................................
+
+
+Aufwände in Stunden
+
+02.05.	2h		Projektablauf, Anforderungen Crawler
+04.05.	4h		Prototyping Skyscanner (mit Ueli)
+05.05.	2h		Impl Skyscanner
+06.05.	1h		Impl Skyscanner
+07.05.	4h		Impl Skyscanner, Recherche Flughäfen
+09.05.	3h		Impl Skyscanner
+10.05.	2h		Impl
+11.05.	2h		Impl
+14.05.	1h		Data Analytics (Heimfahrt vor Ferien)
+29.05.	5h		Data Analytics
+30.05.	2h		Data Analytics
+31.05.	4h		Data Analytics
+01.06.	2h		Data Analytics
+04.06	2h		Data Analytics
+05.06.	3h		Data Analytics
+06.06.	3h		Data Analytics
+12.06.	2h		Analytics
+13.06.	4h		Analytics
+14.06.	

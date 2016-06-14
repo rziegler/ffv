@@ -1,0 +1,35 @@
+NEO4J
+
+user	neo4j
+pwd		ffv
+
+Start neo4j
+------------
+cd /Applications/neo4j-community-2.2.9/bin
+./neo4j console
+
+> localhost:7474
+> Ctrl + C to stop
+
+
+Copy new FFV DB
+----------------
+use script copyFfvDb.sh in '/Users/ruthziegler/Documents/Work/CAS Data Visualization/Flight Fare Visualization/DB'
+
+
+Queries
+-------
+
+MATCH (f)-->(date)-->(price)-->(agent) WHERE agent.agentName='Swiss' and price.requestDaytime='NOON' RETURN DISTINCT f.flightNumber, agent.agentName, f.destination
+
+MATCH (n:Flight) RETURN count(*)
+MATCH (n:FlightDate) RETURN count(*)
+MATCH (n:Price) RETURN count(*)
+
+MATCH (n:Agent) RETURN n.agentName, n.agentType order by n.agentType LIMIT 50
+
+MATCH (f:Flight) --> (n:FlightDate) --> (p:Price)
+RETURN p.price, p.date, p.requestDaytime, n.arrivalDate, n.departureDate, n.duration, f.flightNumber, f.origin, f.destination
+ORDER BY f.flightNumber
+
+

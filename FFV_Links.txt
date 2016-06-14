@@ -1,0 +1,37 @@
+
+Skyscanner API
+
+Account Infos:
+	ziegler.ruth@gmail.com
+	<standardpwd>
+	
+API Key: 
+ru807867842932152822039186410525
+
+http://business.skyscanner.net/portal/en-GB/Documentation/FlightsLivePricingList
+http://business.skyscanner.net/portal/en-GB/Documentation/FlightsLivePricingQuickStart
+
+
+http://www.jsonschema2pojo.org/
+
+
+
+
+
+
+Most busiest flight connections
+
+https://en.wikipedia.org/wiki/List_of_the_world%27s_busiest_airports_by_passenger_traffic
+https://en.wikipedia.org/wiki/List_of_the_busiest_airports_in_Europe
+
+https://en.wikipedia.org/wiki/World%27s_busiest_passenger_air_routes
+http://www.flightconnections.com/
+
+
+
+
+
+R STUFF for my project
+
+
+http://neo4j.com/developer/r/
