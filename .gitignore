@@ -2,3 +2,5 @@
 .Rhistory
 DBs/*.tgz
 DBs/ffv_20160603_PATCHED
+input.csv
+stats-all.csv

@@ -101,22 +101,22 @@ data.flights.grouped <- data.flights.unique %>%
   group_by(
     flightNumber, carrier, number, origin, destination,  # flight related columns
     departure, arrival, duration, departureDay, departureTime, departureWeekday,  # flight date related columns
-    requestDay, requestWeekday,  # request related columns
+    requestDay, requestWeekday, deltaTime, # request related columns
     agentName, agentType  # TODO undo
     ) %>%  # agent related
   summarise(  # aggregate price information
-    p1=first(unique(price)),
-    p2=nth(unique(price), 2),
-    p3=nth(unique(price), 3),
-    p4=nth(unique(price), 4), # dont use last(price), otherwise it uses the last again if there are less than 4 prices a day
+    # p1=first(unique(price)),
+    # p2=nth(unique(price), 2),
+    # p3=nth(unique(price), 3),
+    # p4=nth(unique(price), 4), # dont use last(price), otherwise it uses the last again if there are less than 4 prices a day
     pmin=min(price),
-    pmax=max(price),
-    psd=sd(price),
+    # pmax=max(price),
+    # psd=sd(price),
     pmean=mean(price),
-    pmedian=median(price),
-    price.distinct=n_distinct(price),
-    agent.distinct=n_distinct(agentName),
-    n=n()  # the count of the number of rows being in same group
+    pmedian=median(price)
+    # price.distinct=n_distinct(price),
+    # agent.distinct=n_distinct(agentName),
+    # n=n()  # the count of the number of rows being in same group
   )
 
 write.csv(data.flights.grouped, "data-flights-grouped.csv")
