@@ -14,7 +14,7 @@
 
 # --- global settings (include in every script)
 Sys.setlocale("LC_ALL", "de_CH.UTF-8")  # set locale to UTF-8
-setwd("/Users/ruthziegler/Documents/Work/CAS Data Visualization/Flight Fare Visualization/Analytics/Part 2")
+setwd("/Users/ruthziegler/Documents/Work/CAS Data Visualization/Flight Fare Visualization/Analytics/Part 3")
 
 # --- import base script if not sourced
 if(!exists("data.flights.completeSeriesOnly")) {
