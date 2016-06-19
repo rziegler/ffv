@@ -18,12 +18,70 @@ setwd("/Users/ruthziegler/Documents/Work/CAS Data Visualization/Flight Fare Visu
 
 # --- import base script if not sourced
 if(!exists("data.flights.completeSeriesOnly")) {
-  source("FFV_Analytics_Data_02.R")
+  source("FFV_Analytics_Data.R")
 }
 
 # --- import horizon graph (flowing data)
 if(!exists("horizonGraph", mode="function")) {
   source("horizon-graph.R")
+}
+
+# --- function definitions
+PlotPricesPerWeekdays <- function(values, days) {
+  values.filteredByDays <- values %>% 
+    filter(
+      departureWeekday %in% days
+    ) %>%
+    ungroup() %>%
+    arrange(flightNumber, departureDate, requestDate) %>% 
+    group_by(flightNumber, departureDate) %>% 
+    mutate(
+      n=n(), 
+      deltaTimeInt = as.integer(deltaTime),
+      priceChangeRel = pmin/lag(pmin), 
+      priceChangeAbs = pmin/first(pmin), 
+      pr = dense_rank(pmin), 
+      pcm = cummin(pmin)
+    )
+  
+  values.filteredByDays$priceChangeRel[is.na(values.filteredByDays$priceChangeRel)] <- 1
+  
+  # --- visualize price evolution (min price, absolute price change, relative price change)
+  # min price
+  plot.min <- ggplot(values.filteredByDays, aes(x=deltaTimeInt, y=pmin, shape=flightNumber, color=departureDate)) +
+    geom_point() + 
+    geom_line(aes(group=interaction(departureDate,flightNumber))) +
+    ggtitle(sprintf("Min price (on %s) flight %s, n=%d", 
+                    paste(unique(values.filteredByDays$departureWeekday), collapse = ", "), 
+                    values.filteredByDays$destination, 
+                    kSeriesLength)
+    )
+  # abs price
+  plot.abs <- ggplot(values.filteredByDays, aes(x=deltaTimeInt, y=priceChangeAbs, shape=flightNumber, color=departureDate)) +
+    geom_point() + 
+    geom_line(aes(group=interaction(departureDate,flightNumber))) +
+    ggtitle(sprintf("Abs price change (on %s) flight %s, n=%d", 
+                    paste(unique(values.filteredByDays$departureWeekday), collapse = ", "), 
+                    values.filteredByDays$destination, 
+                    kSeriesLength)
+    )
+  # rel price
+  plot.rel <- ggplot(values.filteredByDays, aes(x=deltaTimeInt, y=priceChangeRel, shape=flightNumber, color=departureDate)) +
+    geom_point() + 
+    geom_line(aes(group=interaction(departureDate,flightNumber))) +
+    ggtitle(sprintf("Rel price change (on %s) flight %s, n=%d", 
+                    paste(unique(values.filteredByDays$departureWeekday), collapse = ", "), 
+                    values.filteredByDays$destination, 
+                    kSeriesLength)
+    )
+  # print plots to PDF
+  pdf(sprintf("%s-%d-%s.pdf", 
+              values.filteredByDays$destination, 
+              kSeriesLength, 
+              paste(unique(values.filteredByDays$departureWeekday), collapse = "-"))
+  )
+  multiplot(plot.min, plot.abs, plot.rel, cols=1)
+  dev.off()
 }
 
 # prefilter for visualization
@@ -33,52 +91,15 @@ viz.data <- data.flights.completeSeriesOnly %>%
   )
 
 viz.test <- viz.data %>%
-  mutate(
-    requestDayAsDate = as.Date(strptime(requestDay, "%d.%m.%Y")),
-    departureDayAsDate = as.Date(strptime(departureDay, "%d.%m.%Y"))
-  ) %>%
   filter(
-    flightNumber == "LX316"
-    #destination == "BKK",
-    #carrier == "TG",
+    # flightNumber == "LX316"
+    destination == "MAD"
+    # carrier == "TG"
     #departureDayAsDate > "2016-06-01",
     #departureDayAsDate < "2016-08-30"
     #departureDay %in% c("27.06.2016", "28.06.2016")
   )
   
-viz.test.x <- viz.test %>% 
-  # mutate(requestDayAsDate = as.Date(strptime(requestDay, "%d.%m.%Y"))) %>%
-  mutate(
-    rank2 = dense_rank(deltaTime)
-  ) %>%
-  filter(
-    departureWeekday %in% c("Mo")
-    # departureWeekday %in% c("Mo", "Di", "Mi", "Do", "Fr")
-    # departureWeekday %in% c("Sa", "So")
-    #departureWeekday %in% c("Mo", "Di", "Mi", "Do", "Fr", "Sa", "So")
-  ) %>%
-  ungroup() %>%
-  arrange(flightNumber, departureDay, requestDayAsDate) %>% 
-  group_by(flightNumber, departureDay) %>% 
-  mutate(n=n(), priceChangeRel = pmin/lag(pmin), priceChangeAbs = pmin/first(pmin), pr = dense_rank(pmin), pcm = cummin(pmin))
-
-viz.test.x$priceChangeRel[is.na(viz.test.x$priceChangeRel)] <- 1
-
-# --- visualize price evolution of some randomly selected flights
-
-#par(mfrow=c(3,1), mar=c(1,0,0.8,0))
-# min price
-plot.min <- ggplot(viz.test.x, aes(x=rank2, y=pmin, group=departureDay, color=departureDay)) +
-  geom_line() +
-  ggtitle(sprintf("Min price (on %s)", paste(unique(viz.test.x$departureWeekday), collapse = ", ")))
-# abs price
-plot.abs <- ggplot(viz.test.x, aes(x=rank2, y=priceChangeAbs, group=departureDay, color=departureDay)) +
-  geom_line() +
-  ggtitle(sprintf("Abs price (on %s)", paste(unique(viz.test.x$departureWeekday), collapse = ", ")))
-# rel price
-plot.rel <- ggplot(viz.test.x, aes(x=rank2, y=priceChangeRel, group=departureDay, color=departureDay)) +
-  geom_line() +
-  ggtitle(sprintf("Rel price (on %s)", paste(unique(viz.test.x$departureWeekday), collapse = ", ")))
-
-
-multiplot(plot.min, plot.abs, plot.rel, cols=1)
+PlotPricesPerWeekdays(viz.test, c("Do"))
+PlotPricesPerWeekdays(viz.test, c("Mo", "Di", "Mi", "Do", "Fr"))
+PlotPricesPerWeekdays(viz.test, c("Sa", "So"))

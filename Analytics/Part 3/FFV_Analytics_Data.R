@@ -26,6 +26,9 @@ if(!exists("DateFromMillis", mode="function")) {
 kReadDataModes <- c("DATABASE", "FILE")
 kReadDataMode <- kReadDataModes[2]
 
+kSeriesLength <- 21 # should be multiples of 7 to have complete weeks
+kLatestRequestDate <- as.IDate("2016-06-03")
+
 # --- read data
 if(kReadDataMode=="DATABASE") {
   kDbUrl  <- "http://localhost:7474/db/data/"
@@ -52,7 +55,7 @@ if(kReadDataMode=="DATABASE") {
 }
 
 # rename columns
-names(data.raw) <- c("flightNumber", "carrier", "number", "origin", "destination", "departure", "arrival", "duration", "price", "requestDate", "requestExecutionDate", "requestDaytime", "agentName", "agentType")
+names(data.raw) <- c("flightNumber", "carrier", "number", "origin", "destination", "departure", "arrival", "duration", "price", "request", "requestExecution", "requestDaytime", "agentName", "agentType")
 
 # transform data types
 data.raw$flightNumber <- as.factor(data.raw$flightNumber)
@@ -67,28 +70,28 @@ data.raw$requestDaytime <- as.factor(data.raw$requestDaytime)
 data.raw$agentName <- as.factor(data.raw$agentName)
 data.raw$agentType <- as.factor(data.raw$agentType)
 # use the exact request execution date instead of the "normalized" request date
-#data.raw$requestDate <- DateFromMillis(data.raw$requestDate)
-data.raw$requestDate <- DateFromMillis(data.raw$requestExecutionDate)
+#data.raw$request <- DateFromMillis(data.raw$request)
+data.raw$request <- DateFromMillis(data.raw$requestExecution)
 
 # --- reshaping data
 
 # filter all UNKNOWN requests and calculate helper columns for grouping
 data.flights <- data.raw %>% 
   mutate(
-    # delta > 90 duerfte auch mit dem fehler zusammenhaengen, dass requestdate veraendert wurde mit skyscanner api
-    deltaTime = (round(difftime(data.raw$departure, data.raw$requestDate, units = c("days"), tz="UTC"), 0)),
-    requestWeekday = as.factor(weekdays(data.raw$requestDate, abbreviate=TRUE)),
-    requestDay = (strftime(requestDate, format="%d.%m.%Y", tz="UTC")),
-    departureDay = (strftime(departure, format="%d.%m.%Y", tz="UTC")),
-    departureTime = (strftime(departure, format="%H:%M:%S", tz="UTC")),
+    departureDate = as.IDate(data.raw$departure),
+    departureTime = as.ITime(data.raw$departure),
+    arrivalDate = as.IDate(data.raw$arrival),
+    arrivalTime = as.ITime(data.raw$arrival),
+    requestDate = as.IDate(data.raw$request),
+    # requestTime = as.ITime(data.raw$request),
+    deltaTime = difftime(departureDate, requestDate, units = c("days"), tz="UTC"),
+    requestWeekday = as.factor(weekdays(data.raw$request, abbreviate=TRUE)),
     departureWeekday = as.factor(weekdays(data.raw$departure, abbreviate=TRUE))
   ) %>%
-  select(-requestExecutionDate)  # drop the requestExecutionDate column, only use requestDate from now on
+  select(-requestExecution, -number, -departure, -arrival, -request)  # drop the requestExecutionDate column, only use requestDate from now on
 
 data.flights.filtered <- data.flights %>% 
-  #filter(requestDaytime!="UNKNOWN", agentType=="Airline") # TODO undo
-  #filter(requestDaytime!="UNKNOWN", agentName=="eDreams") # TODO undo
-  filter(requestDaytime!="UNKNOWN")
+  filter(requestDaytime != "UNKNOWN")
 
 data.flights.unique <- distinct(data.flights.filtered)
 
@@ -99,24 +102,49 @@ data.flights.unique <- distinct(data.flights.filtered)
 # - price (is aggregated, see sumarise)
 data.flights.grouped <- data.flights.unique %>% 
   group_by(
-    flightNumber, carrier, number, origin, destination,  # flight related columns
-    departure, arrival, duration, departureDay, departureTime, departureWeekday,  # flight date related columns
-    requestDay, requestWeekday, deltaTime, # request related columns
+    flightNumber, carrier, origin, destination,  # flight related columns
+    departureDate, departureTime, arrivalDate, arrivalTime, duration, departureWeekday,  # flight date related columns
+    requestDate, requestWeekday, deltaTime, # request related columns
     agentName, agentType  # TODO undo
-    ) %>%  # agent related
+  ) %>%  # agent related
   summarise(  # aggregate price information
-    # p1=first(unique(price)),
-    # p2=nth(unique(price), 2),
-    # p3=nth(unique(price), 3),
-    # p4=nth(unique(price), 4), # dont use last(price), otherwise it uses the last again if there are less than 4 prices a day
-    pmin=min(price),
-    # pmax=max(price),
-    # psd=sd(price),
-    pmean=mean(price),
-    pmedian=median(price)
-    # price.distinct=n_distinct(price),
-    # agent.distinct=n_distinct(agentName),
-    # n=n()  # the count of the number of rows being in same group
+    pmin=min(price)
   )
 
-write.csv(data.flights.grouped, "data-flights-grouped.csv")
+# write.csv(data.flights.grouped, "data-flights-grouped.csv")
+
+# filter only complete price series (means that kSeriesLength requests for flight on day x have been fulfilled)
+# --- drop incomplete series
+data.fligths.completeSeriesOnly <- data.flights.grouped %>%
+  ungroup() %>%
+  arrange(flightNumber, departureDate, requestDate) %>%  # sorting 
+  group_by(flightNumber, departureDate) %>%
+  filter(
+    departureDate <= kLatestRequestDate
+  )
+
+data.flights.completeSeriesOnly <- data.fligths.completeSeriesOnly %>%
+  # ungroup() %>%
+  # arrange(flightNumber, departureDate, requestDate) %>%  # sorting 
+  # group_by(flightNumber, departureDate) %>%
+  mutate(
+    rank = dense_rank(requestDate),
+    maxRank = max(rank)
+  )
+
+# ATTENTION: do not change grouping before executing
+data.flights.completeSeriesOnly <- data.flights.completeSeriesOnly %>%
+  filter(
+    (maxRank >= kSeriesLength) & (rank > (maxRank - kSeriesLength))
+  )
+
+data.flights.completeSeriesOnly <- data.flights.completeSeriesOnly %>%
+  select(-rank, -maxRank) 
+
+# data.flights.completeSeriesRanked <- data.flights.completeSeriesOnly %>%
+#   ungroup() %>%
+#   arrange(flightNumber, departureDate, requestDate) %>%  # sorting 
+#   group_by(flightNumber, departureDate) %>%
+#   mutate(
+#     rank = dense_rank(requestDate)  # rerank again the complete series
+#   )

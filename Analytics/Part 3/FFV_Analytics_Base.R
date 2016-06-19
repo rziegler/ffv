@@ -37,12 +37,10 @@ DateFromMillis <- function(millis) {
 # --- import libraries
 #install.packages("RNeo4j", "dplyr", "ggplot2", "tidyr", "data.table")  # only needs to be once
 #install.packages("Rmisc")
+library(data.table)
+library(bit64)
 library(RNeo4j)
+library(Rmisc)
 library(dplyr)
 library(ggplot2)
 library(tidyr)
-library(data.table)
-library(bit64)
-library(Rmisc)
-#library(gridExtra)
-# library(gridExra)  # tar: Failed to set default locale (http://davidprakash.blogspot.ch/2011/05/r-error-tar-failed-to-set-default.html)
