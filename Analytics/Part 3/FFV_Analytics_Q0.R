@@ -17,8 +17,8 @@ Sys.setlocale("LC_ALL", "de_CH.UTF-8")  # set locale to UTF-8
 setwd("/Users/ruthziegler/Documents/Work/CAS Data Visualization/Flight Fare Visualization/Analytics/Part 3")
 
 # --- import base script if not sourced
-if(!exists("data.flights.completeSeriesOnly")) {
-  source("FFV_Analytics_Data.R")
+if(!exists("global_labeller", mode="function")) {
+  source("FFV_Analytics_QBase.R")
 }
 
 # install.packages("modeest")
@@ -33,28 +33,41 @@ data.q0 <- data.flights.completeSeriesOnly %>%
     pmin == min(pmin)
   )
 
-# count by request weekday and destination
+# -- BY REQUEST WEEKDAY, DESTINATION AND CARRIER
+# count by request weekday, destination AND carrier
 data.q0.byRequestWeekday <- data.q0 %>%
-  group_by(requestWeekday, destination) %>%
+  group_by(requestWeekday, carrier, destination) %>%
   summarise(
     n = n()
   )
 
-# plot cheapest flights distributed by request weekday for each destination
+# plot cheapest flights distributed by request weekday for each destination and carrier
 ggplot(data = data.q0.byRequestWeekday, 
        aes(x = requestWeekday, 
-           y = n)) + 
+           y = n,
+           fill = carrier)) + 
   geom_bar(stat="identity") +
-  facet_wrap(~ destination, ncol = 5, scales="free_y") + 
+  facet_wrap(~ destination, ncol = 5, scales="free_y", labeller = global_labeller) + 
   ggtitle("Number of cheapest flights on request weekday overall") +
   xlab("request weekday") +
   ylab("number of cheapest flights")
+SavePlot("q0-request-wday-all.pdf")
 
+ggplot(data = data.q0.byRequestWeekday, 
+       aes(x = requestWeekday, 
+           y = n,
+           fill = carrier)) + 
+  geom_bar(stat="identity", position = "dodge") +
+  facet_wrap(~ destination, ncol = 5, scales="free_y", labeller = global_labeller) + 
+  ggtitle("Number of cheapest flights on request weekday overall") +
+  xlab("request weekday") +
+  ylab("number of cheapest flights")
+SavePlot("q0-request-wday-all-2.pdf")
 
 # calculate the mode value for request weekday
 # data.q0.mode <- mfv(as.numeric(data.q0$requestWeekday))
 
-# same as above but additionally grouped by agend
+# same as above but additionally grouped by agent
 data.q0.agent <- data.flights.completeSeriesOnly %>%
   ungroup() %>%
   arrange(flightNumber, departureDate, agentName, requestDate) %>%  # sorting 
@@ -63,30 +76,21 @@ data.q0.agent <- data.flights.completeSeriesOnly %>%
     pmin == min(pmin)
   )
 
+# -- BY REQUEST WEEKDAY, DESTINATION AND AGENT
 # count by request weekday and destination for each agent
 data.q0.agent.byRequestWeekday <- data.q0.agent %>%
-  group_by(requestWeekday, agentName, destination) %>%
+  group_by(requestWeekday, carrier, destination, agentName) %>%
   summarise(
     n = n()
   )
 
-# plot cheapest flights distributed by request weekday for each destination and agent
-# ggplot(data = data.q0.agent.byRequestWeekday, 
-#        aes(x = requestWeekday, 
-#            y = n, 
-#            fill = agentName)) + 
-#   geom_bar(stat="identity", position = "dodge") +
-#   geom_vline(xintercept=seq(1.5, length(unique(viz.q0$requestWeekday))-0.5, 1), 
-#              lwd=0.5, colour="black") +
-#   ggtitle("Number of cheapest flights on request weekday for each agent") +
-#   xlab("request weekday") +
-#   ylab("number of cheapest flights")
-
 ggplot(data = data.q0.agent.byRequestWeekday, 
        aes(x = requestWeekday, 
-           y = n)) + 
+           y = n,
+           fill = carrier)) + 
   geom_bar(stat="identity") +
-  facet_grid(destination ~ agentName, scales="free_y") + 
+  facet_grid(destination ~ agentName, scales="free_y", labeller = global_labeller) + 
   ggtitle("Number of cheapest flights on request weekday for each agent") +
   xlab("request weekday") +
   ylab("number of cheapest flights")
+SavePlot("q0-request-wday-agent.pdf")

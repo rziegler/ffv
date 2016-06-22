@@ -34,6 +34,26 @@ DateFromMillis <- function(millis) {
   }
 }
 
+SavePlot <- function(name) {
+  ggsave(file=name, width = 297, height = 210, units = "mm")
+}
+
+PrintMinPrice <- function(df, fNumber, departureDateAsString) {  #df = data.flights.completeSeriesOnly, flightNumber = "LX332", departureDate = "2016-06-01"
+  tmp <- df %>%
+    filter(
+      flightNumber == fNumber,
+      departureDate >= departureDateAsString,
+      departureDate <= departureDateAsString
+    )
+  # min price
+  p <- ggplot(tmp, aes(x=requestDate, y=pmin, group=agentName, color=agentName)) +
+    geom_line() +
+    ggtitle(sprintf("Min price (flight %s, on %s)", tmp$flightNumber, paste(unique(tmp$departureDate), collapse = ", ")))
+  print(p)
+  rm(tmp)
+}
+
+
 # --- import libraries
 #install.packages("RNeo4j", "dplyr", "ggplot2", "tidyr", "data.table")  # only needs to be once
 #install.packages("Rmisc")

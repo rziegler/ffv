@@ -26,8 +26,7 @@ if(!exists("DateFromMillis", mode="function")) {
 kReadDataModes <- c("DATABASE", "FILE")
 kReadDataMode <- kReadDataModes[2]
 
-kSeriesLength <- 21 # should be multiples of 7 to have complete weeks
-kLatestRequestDate <- as.IDate("2016-06-03")
+######## for constants relating complete time series look further down 
 
 # --- read data
 if(kReadDataMode=="DATABASE") {
@@ -114,6 +113,11 @@ data.flights.grouped <- data.flights.unique %>%
 # write.csv(data.flights.grouped, "data-flights-grouped.csv")
 
 # filter only complete price series (means that kSeriesLength requests for flight on day x have been fulfilled)
+
+# --- constants for series length and latest request date
+kSeriesLength <- 21 # should be multiples of 7 to have complete weeks
+kLatestRequestDate <- max(data.flights.grouped$requestDate)  # latest request date from dump
+
 # --- drop incomplete series
 data.flights.completeSeriesOnly <- data.flights.grouped %>%
   ungroup() %>%
@@ -140,6 +144,17 @@ data.flights.completeSeriesOnly <- data.flights.completeSeriesOnly %>%
 
 data.flights.completeSeriesOnly <- data.flights.completeSeriesOnly %>%
   select(-rank, -maxRank) 
+
+# -- for checking if all flights depart on every weekday or not
+# -- actually ICN (Seoul) only flies on DI, DO and SA, and RHO (Rhodes) does not fly on FR, all other flights depart on every weekday
+data.flights.destinationByWeekday <- data.flights.completeSeriesOnly %>%
+  group_by(destination) %>%
+  summarise(
+    n = n(),
+    ndistinct = n_distinct(departureWeekday),
+    weekdays_concatenated = paste(unique(departureWeekday), collapse = ", ")
+  ) %>% 
+  arrange(ndistinct, destination)
 
 # data.flights.completeSeriesRanked <- data.flights.completeSeriesOnly %>%
 #   ungroup() %>%
