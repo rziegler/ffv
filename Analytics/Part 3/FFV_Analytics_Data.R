@@ -66,7 +66,7 @@ data.raw$destination <- as.factor(data.raw$destination)
 data.raw$departure <- DateFromMillis(data.raw$departure)
 data.raw$arrival <- DateFromMillis(data.raw$arrival)
 data.raw$price <- as.double(data.raw$price)
-data.raw$requestDaytime <- as.factor(data.raw$requestDaytime)
+data.raw$requestDaytime <- factor(data.raw$requestDaytime, levels = c("NIGHT", "MORNING", "NOON", "EVENING", "UNKNOWN"))
 data.raw$agentName <- as.factor(data.raw$agentName)
 data.raw$agentType <- as.factor(data.raw$agentType)
 # use the exact request execution date instead of the "normalized" request date
@@ -85,8 +85,8 @@ data.flights <- data.raw %>%
     requestDate = as.IDate(data.raw$request),
     # requestTime = as.ITime(data.raw$request),
     deltaTime = difftime(departureDate, requestDate, units = c("days"), tz="UTC"),
-    requestWeekday = as.factor(weekdays(data.raw$request, abbreviate=TRUE)),
-    departureWeekday = as.factor(weekdays(data.raw$departure, abbreviate=TRUE))
+    requestWeekday = factor(weekdays(data.raw$request, abbreviate=TRUE), levels = c("Mo", "Di", "Mi", "Do", "Fr", "Sa", "So")),
+    departureWeekday = factor(weekdays(data.raw$departure, abbreviate=TRUE), levels = c("Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"))
   ) %>%
   select(-requestExecution, -number, -departure, -arrival, -request)  # drop the requestExecutionDate column, only use requestDate from now on
 
@@ -115,7 +115,7 @@ data.flights.grouped <- data.flights.unique %>%
 
 # filter only complete price series (means that kSeriesLength requests for flight on day x have been fulfilled)
 # --- drop incomplete series
-data.fligths.completeSeriesOnly <- data.flights.grouped %>%
+data.flights.completeSeriesOnly <- data.flights.grouped %>%
   ungroup() %>%
   arrange(flightNumber, departureDate, requestDate) %>%  # sorting 
   group_by(flightNumber, departureDate) %>%
@@ -123,7 +123,7 @@ data.fligths.completeSeriesOnly <- data.flights.grouped %>%
     departureDate <= kLatestRequestDate
   )
 
-data.flights.completeSeriesOnly <- data.fligths.completeSeriesOnly %>%
+data.flights.completeSeriesOnly <- data.flights.completeSeriesOnly %>%
   # ungroup() %>%
   # arrange(flightNumber, departureDate, requestDate) %>%  # sorting 
   # group_by(flightNumber, departureDate) %>%
