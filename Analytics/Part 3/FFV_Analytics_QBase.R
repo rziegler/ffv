@@ -21,6 +21,7 @@ if(!exists("data.flights.completeSeriesOnly")) {
   source("FFV_Analytics_Data.R")
 }
 
+# --- define a global labeller used in all faceting plots
 destinationLabels <- c(
   AMS = "Amsterdam (AMS)",
   BEG = "Belgrade (BEG)",
@@ -31,7 +32,7 @@ destinationLabels <- c(
   ICN = "Seoul (ICN)",
   IST = "Istanbul (IST)",
   JFK = "New York (JFK)",
-  KEV = "Reykjavik (KEV)",
+  KEF = "Reykjavik (KEF)",
   LHR = "London (LHR)",
   MAD = "Madrid (MAD)",
   MLA = "Malta (MLA)",
