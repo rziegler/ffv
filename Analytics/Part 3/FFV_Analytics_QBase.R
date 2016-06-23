@@ -47,5 +47,7 @@ destinationLabels <- c(
 
 global_labeller <- labeller(
   destination = destinationLabels,
+  agentName = label_wrap_gen(10),
+  flightNumber = label_wrap_gen(10),
   .default = label_both
 )

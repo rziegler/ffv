@@ -46,14 +46,15 @@ data.q2 <- data.flights.completeSeriesOnly %>%
 data.q2.unique <- data.q2 %>%
   ungroup() %>%
   group_by(flightNumber, carrier, origin, destination, 
-           departureDate, departureTime, arrivalDate, arrivalTime, duration, departureWeekday,
-           agentName, agentType, pmin) %>%
+           departureDate, departureTime, arrivalDate, arrivalTime, duration, departureWeekday, pmin) %>%
   arrange(flightNumber, departureDate, departureTime, agentName, requestDate, weeks) %>%
   summarise(
     requestDate = first(requestDate),  # keep the first #### TODO it could be that if I have mutliple cheapest prices, they are not in the same week
     requestWeekday = first(requestWeekday),
     deltaTime = first(deltaTime),
-    weeks = first(weeks)
+    weeks = first(weeks),
+    agentName = first(agentName),
+    agentType = first(agentType)
   )
 
 # -- BY WEEKS, FLIGHT NUMBER (CARRIER) AND DESTINATION
@@ -110,14 +111,15 @@ data.q2.agent <- data.flights.completeSeriesOnly %>%
 data.q2.agent.unique <- data.q2.agent %>%
   ungroup() %>%
   group_by(flightNumber, carrier, origin, destination, 
-           departureDate, departureTime, arrivalDate, arrivalTime, duration, departureWeekday,
-           agentName, agentType, pmin) %>%
+           departureDate, departureTime, arrivalDate, arrivalTime, duration, departureWeekday, pmin) %>%
   arrange(flightNumber, departureDate, departureTime, agentName, requestDate, weeks) %>%
   summarise(
     requestDate = first(requestDate),  # keep the first
     requestWeekday = first(requestWeekday),
     deltaTime = first(deltaTime),
-    weeks = first(weeks)
+    weeks = first(weeks),
+    agentName = first(agentName),
+    agentType = first(agentType)
   )
 
 # -- BY WEEKS, FLIGHT NUMBER (CARRIER) AND DESTINATION

@@ -44,13 +44,14 @@ data.q1 <- data.flights.completeSeriesOnly %>%
 data.q1.unique <- data.q1 %>%
   ungroup() %>%
   group_by(flightNumber, carrier, origin, destination, 
-           departureDate, departureTime, arrivalDate, arrivalTime, duration, departureWeekday,
-           agentName, agentType, pmin) %>%
+           departureDate, departureTime, arrivalDate, arrivalTime, duration, departureWeekday, pmin) %>%
   arrange(flightNumber, departureDate, departureTime, agentName, requestDate) %>%
   summarise(
     requestDate = first(requestDate),  # keep the first #### TODO it could be that if I have mutliple cheapest prices, they are not in the same week
     requestWeekday = first(requestWeekday),
-    deltaTime = first(deltaTime)
+    deltaTime = first(deltaTime),
+    agentName = first(agentName),
+    agentType = first(agentType)
   )
 
 # -- BY DEPARTURE WEEKDAY, CARRIER AND DESTINATION
@@ -116,13 +117,14 @@ data.q1.agent <- data.flights.completeSeriesOnly %>%
 data.q1.agent.unique <- data.q1.agent %>%
   ungroup() %>%
   group_by(flightNumber, carrier, origin, destination, 
-           departureDate, departureTime, arrivalDate, arrivalTime, duration, departureWeekday,
-           agentName, agentType, pmin) %>%
+           departureDate, departureTime, arrivalDate, arrivalTime, duration, departureWeekday, pmin) %>%
   arrange(flightNumber, departureDate, departureTime, agentName, requestDate) %>%
   summarise(
     requestDate = first(requestDate),  # keep the first
     requestWeekday = first(requestWeekday),
-    deltaTime = first(deltaTime)
+    deltaTime = first(deltaTime),
+    agentName = first(agentName),
+    agentType = first(agentType)
   )
 
 # count by departure weekday for each flight with same carrier for each agent
