@@ -46,11 +46,11 @@ PrintMinPrice <- function(df, fNumber, departureDateAsString) {  #df = data.flig
       departureDate <= departureDateAsString
     )
   # min price
+  dev.off()
   p <- ggplot(tmp, aes(x=requestDate, y=pmin, group=agentName, color=agentName)) +
     geom_line() +
     ggtitle(sprintf("Min price (flight %s, on %s)", tmp$flightNumber, paste(unique(tmp$departureDate), collapse = ", ")))
   print(p)
-  rm(tmp)
 }
 
 

@@ -7,6 +7,12 @@
 #
 #               Frage 0) An welchem Wochentag soll ich buchen? (requestDate)
 #
+#               WICHTIG: Wenn ein günstigster Preis von einem Anbieter über 
+#               mehrere Tage konstant ist, dann werden alle Tage berücksichtigt. 
+#               Dies führt dazu, dass ein Abflugtag mehrmals "gezählt" wird. Da
+#               in dieser Auswertung nur der Abfragetag (requestDate) eine Rolle
+#               spielt, ist dies in Ordnung.
+#
 # Autor         Ruth Ziegler
 # Date          2016-06-21
 # Version       v1.0

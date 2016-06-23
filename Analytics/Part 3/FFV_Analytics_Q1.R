@@ -7,6 +7,11 @@
 #
 #               Frage 1) An welchem Wochentag soll ich abfliegen? (departureDate)
 #
+#               WICHTIG: Wenn ein günstigster Preis von einem Anbieter über 
+#               mehrere Tage konstant ist, dann wird jeweils nur der früheste
+#               Tag behalten. So wird vermieden, dass ein Abflugtag mehrmals 
+#               berücksichtigt wird.
+#
 # Autor         Ruth Ziegler
 # Date          2016-06-21
 # Version       v1.0
@@ -21,9 +26,7 @@ if(!exists("global_labeller", mode="function")) {
   source("FFV_Analytics_QBase.R")
 }
 
-# install.packages("modeest")
-library(modeest)
-
+# --- filter data
 # filter lowest prices for each flight
 data.q1 <- data.flights.completeSeriesOnly %>%
   ungroup() %>%
@@ -33,10 +36,27 @@ data.q1 <- data.flights.completeSeriesOnly %>%
     pmin == min(pmin)
   )
 
-# -- BY DEPARTURE WEEKDAY, FLIGHT NUMBER (CARRIER) AND DESTINATION
-# count by departure weekday for each flight with same flight number and destination
-data.q1.byDepartureWeekday <- data.q1 %>%
-  group_by(flightNumber, carrier, departureWeekday, destination) %>%
+# --- make each lowest price unique
+# if a price doesn't change for multiple days and it is the cheapest for this flights, 
+# there are multiple rows for every request day with that cheap price in data.q2. 
+# to avoid counting a destination-related row multiple times only one row is kept 
+# (the first returning this cheap price).
+data.q1.unique <- data.q1 %>%
+  ungroup() %>%
+  group_by(flightNumber, carrier, origin, destination, 
+           departureDate, departureTime, arrivalDate, arrivalTime, duration, departureWeekday,
+           agentName, agentType, pmin) %>%
+  arrange(flightNumber, departureDate, departureTime, agentName, requestDate) %>%
+  summarise(
+    requestDate = first(requestDate),  # keep the first #### TODO it could be that if I have mutliple cheapest prices, they are not in the same week
+    requestWeekday = first(requestWeekday),
+    deltaTime = first(deltaTime)
+  )
+
+# -- BY DEPARTURE WEEKDAY, CARRIER AND DESTINATION
+# count by departure weekday for each flight with same carrier and destination
+data.q1.byDepartureWeekday <- data.q1.unique %>%
+  group_by(carrier, departureWeekday, destination) %>%
   summarise(
     n = n()
   )
@@ -92,11 +112,24 @@ data.q1.agent <- data.flights.completeSeriesOnly %>%
     pmin == min(pmin)
   )
 
-# count by departure weekday for each flight with same flight number for each agent
-data.q1.agent.byDepartureWeekday <- data.q1.agent %>%
-  group_by(flightNumber, departureWeekday, carrier, agentName) %>%
+# --- make each lowest price unique
+data.q1.agent.unique <- data.q1.agent %>%
+  ungroup() %>%
+  group_by(flightNumber, carrier, origin, destination, 
+           departureDate, departureTime, arrivalDate, arrivalTime, duration, departureWeekday,
+           agentName, agentType, pmin) %>%
+  arrange(flightNumber, departureDate, departureTime, agentName, requestDate) %>%
   summarise(
-    count = n()
+    requestDate = first(requestDate),  # keep the first
+    requestWeekday = first(requestWeekday),
+    deltaTime = first(deltaTime)
+  )
+
+# count by departure weekday for each flight with same carrier for each agent
+data.q1.agent.byDepartureWeekday <- data.q1.agent.unique %>%
+  group_by(carrier, departureWeekday, destination, agentName) %>%
+  summarise(
+    n = n()
   )
 
 ggplot(data = data.q1.agent.byDepartureWeekday, 
