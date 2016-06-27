@@ -75,36 +75,36 @@ PrintMinPrice(data.flights.completeSeriesOnly, "LX1416", "2016-06-15")
 PrintMinPrice(data.flights.completeSeriesOnly, "KL1954", "2016-06-19")
 
 
-viz.byFlightNumber <- data.q3.diff %>%
+viz.destination <- data.q3.diff %>%
   filter(
     destination == "LHR"
   )
 
-# ggplot(viz.byFlightNumber, aes(x = departureDate, y = priceSaveRel)) +
+# ggplot(viz.destination, aes(x = departureDate, y = priceSaveRel)) +
 #   geom_point(shape=1)      # Use hollow circles
 
 
-ggplot(data = viz.byFlightNumber, 
+ggplot(data = viz.destination, 
        aes(x = departureDate, 
            y = priceSaveRel,
            shape = carrier)) + 
   geom_point() +
   # geom_smooth() + 
   facet_grid(agentName ~ flightNumber, labeller = global_labeller) + 
-  ggtitle(sprintf("Price difference between min/max price per flight (%s)", viz.byFlightNumber$destination)) +
+  ggtitle(sprintf("Price difference between min/max price per flight (%s)", viz.destination$destination)) +
   xlab("departure date") +
   ylab("price difference between min/max price in %")
 
 
 
-ggplot(data = viz.byFlightNumber, 
-       aes(x = factor(departureDate), 
-           y = priceSaveRel)) + 
-  geom_boxplot() +
-  facet_wrap(~ agentName, ncol = 5, labeller = global_labeller) + 
-  ggtitle(sprintf("Price difference between min/max price per flight (%s)", viz.byFlightNumber$destination)) +
-  xlab("departure date") +
-  ylab("price difference between min/max price in %")
+# ggplot(data = viz.destination, 
+#        aes(x = factor(departureDate), 
+#            y = priceDiffAbs)) + 
+#   geom_boxplot() +
+#   facet_wrap(~ agentName, ncol = 5, labeller = global_labeller) + 
+#   ggtitle(sprintf("Price difference between min/max price per flight (%s)", viz.destination$destination)) +
+#   xlab("departure date") +
+#   ylab("price difference between min/max price in %")
 
 
 

@@ -23,4 +23,8 @@ Aufwände in Stunden
 06.06.	3h		Data Analytics
 12.06.	2h		Analytics
 13.06.	4h		Analytics
-14.06.	
+14.06.		
+22.06.  8h		dito
+23.06.  8h		dito
+26.06.	4h		Processing Viz
+27.06.	

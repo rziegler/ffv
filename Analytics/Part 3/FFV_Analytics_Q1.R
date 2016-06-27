@@ -104,6 +104,7 @@ SavePlot("q1-departure-wday-all-2.pdf")
 # for validation of some results ;)
 # PrintMinPrice(data.flights.completeSeriesOnly, "LX332", "2016-06-01")
 
+
 # same as above but additionally grouped by agent
 data.q1.agent <- data.flights.completeSeriesOnly %>%
   ungroup() %>%

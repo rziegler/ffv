@@ -110,8 +110,6 @@ data.flights.grouped <- data.flights.unique %>%
     pmin=min(price)
   )
 
-# write.csv(data.flights.grouped, "data-flights-grouped.csv")
-
 # filter only complete price series (means that kSeriesLength requests for flight on day x have been fulfilled)
 
 # --- constants for series length and latest request date
@@ -127,23 +125,27 @@ data.flights.completeSeriesOnly <- data.flights.grouped %>%
     departureDate <= kLatestRequestDate
   )
 
+# ATTENTION: do not change grouping before executing, it bases on grouping of prev stmt
 data.flights.completeSeriesOnly <- data.flights.completeSeriesOnly %>%
-  # ungroup() %>%
-  # arrange(flightNumber, departureDate, requestDate) %>%  # sorting 
-  # group_by(flightNumber, departureDate) %>%
   mutate(
     rank = dense_rank(requestDate),
     maxRank = max(rank)
   )
 
-# ATTENTION: do not change grouping before executing
+# ATTENTION: do not change grouping before executing, it bases on grouping of prev stmt
 data.flights.completeSeriesOnly <- data.flights.completeSeriesOnly %>%
   filter(
     (maxRank >= kSeriesLength) & (rank > (maxRank - kSeriesLength))
   )
 
+# ATTENTION: do not change grouping before executing, it bases on grouping of prev stmt
 data.flights.completeSeriesOnly <- data.flights.completeSeriesOnly %>%
   select(-rank, -maxRank) 
+
+
+# writing the results
+write.csv(data.flights.grouped, "data-flights-grouped.csv")
+write.csv(data.flights.completeSeriesOnly, "data-flights-completeseries.csv")
 
 # -- for checking if all flights depart on every weekday or not
 # -- actually ICN (Seoul) only flies on DI, DO and SA, and RHO (Rhodes) does not fly on FR, all other flights depart on every weekday
@@ -155,11 +157,3 @@ data.flights.destinationByWeekday <- data.flights.completeSeriesOnly %>%
     weekdays_concatenated = paste(unique(departureWeekday), collapse = ", ")
   ) %>% 
   arrange(ndistinct, destination)
-
-# data.flights.completeSeriesRanked <- data.flights.completeSeriesOnly %>%
-#   ungroup() %>%
-#   arrange(flightNumber, departureDate, requestDate) %>%  # sorting 
-#   group_by(flightNumber, departureDate) %>%
-#   mutate(
-#     rank = dense_rank(requestDate)  # rerank again the complete series
-#   )
