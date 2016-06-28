@@ -4,3 +4,9 @@ DBs/*.tgz
 DBs/ffv_20160603_PATCHED
 input.csv
 stats-all.csv
+all.csv
+Cartography/*.zip
+*/Results/*.pdf
+Analytics/Part 3/Results
+Analytics/Part 2/*.csv
+Analytics/Part 3/*.csv
