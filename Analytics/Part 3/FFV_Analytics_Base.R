@@ -57,6 +57,7 @@ PrintMinPrice <- function(df, fNumber, departureDateAsString) {  #df = data.flig
 # --- import libraries
 #install.packages("RNeo4j", "dplyr", "ggplot2", "tidyr", "data.table")  # only needs to be once
 #install.packages("Rmisc")
+#install.packages("ISOweek")
 library(data.table)
 library(bit64)
 library(RNeo4j)
@@ -64,3 +65,4 @@ library(Rmisc)
 library(dplyr)
 library(ggplot2)
 library(tidyr)
+library(ISOweek)

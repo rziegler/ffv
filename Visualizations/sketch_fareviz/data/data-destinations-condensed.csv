@@ -1,21 +1,21 @@
-"destination","destinationName"
-"AMS","Amsterdam"
-"BEG","Belgrade"
-"BKK","Bangkok"
-"BOM","Bombay"
-"DXB","Dubai"
-"GRU","Sao Paolo"
-"ICN","Seoul"
-"IST","Istanbul"
-"JFK","New York"
-"KEF","Reykjavik"
-"LHR","London"
-"MAD","Madrid"
-"MLA","Malta"
-"NRT","Tokyo"
-"PEK","Peking"
-"RHO","Rhode"
-"RIX","Riga"
-"SIN","Singapore"
-"SVO","Moscou"
-"YYZ","Toronto"
+"destination","destinationName","avgFlightsPerDay","durationMin","durationMax"
+"AMS","Amsterdam",8.8,90,105
+"BEG","Belgrade",4,100,105
+"BKK","Bangkok",1.7,655,660
+"BOM","Bombay",1,505,505
+"DXB","Dubai",2.9,370,380
+"GRU","Sao Paolo",1,735,735
+"ICN","Seoul",1,650,660
+"IST","Istanbul",5.4,165,175
+"JFK","New York",2,525,530
+"KEF","Reykjavik",1,230,230
+"LHR","London",12,100,120
+"MAD","Madrid",6,140,150
+"MLA","Malta",1.5,130,135
+"NRT","Tokyo",1,705,715
+"PEK","Peking",1,595,595
+"RHO","Rhode",1.4,175,200
+"RIX","Riga",1,150,170
+"SIN","Singapore",2,730,755
+"SVO","Moscou",2,190,205
+"YYZ","Toronto",1,515,515

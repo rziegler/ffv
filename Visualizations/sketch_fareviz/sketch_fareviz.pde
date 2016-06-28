@@ -13,25 +13,22 @@ int centerY;
 void setup() {
   size(1200,900);
   background(255);
-  noLoop();
   
   centerX = width/2-150;
   centerY = height/2;
   
   initCircleFromData();
   
-  drawOuterCircle();
-  drawInnerCircle();
+  destinationCircle.drawOuterCircle();
+  destinationCircle.drawInnerCircle();
 }
 
 void draw() {
   
-  
 }
 
 void mouseClicked() {
-  destinationCircle.calculateSelectedSlice(mouseX, mouseY);
-  println(destinationCircle.selectedSlice.destination.name);
+  destinationCircle.selectSliceAt(mouseX, mouseY);
 }
 
 void initCircleFromData() {
@@ -41,21 +38,4 @@ void initCircleFromData() {
 
 boolean isMouseInsideSlice(int x, int y) {
   return true;
-}
-
-void drawInnerCircle() {
-  noStroke();
-  fill(60);
-  ellipse(centerX, centerY, innerCircleRadius, innerCircleRadius);
-}
-
-void drawOuterCircle() {
-  
-  for(DestinationSlice ds : destinationCircle.slices) {
-    ds.draw(outerCircleRadius);
-  }
-  
-  // draw on top to make a doughnut
-  fill(255);
-  ellipse(centerX, centerY, outerCircleRadius-100, outerCircleRadius-100);
 }

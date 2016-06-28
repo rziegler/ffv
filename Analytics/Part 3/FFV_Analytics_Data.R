@@ -142,6 +142,14 @@ data.flights.completeSeriesOnly <- data.flights.completeSeriesOnly %>%
 data.flights.completeSeriesOnly <- data.flights.completeSeriesOnly %>%
   select(-rank, -maxRank) 
 
+# --- filter all series that are not continuous, i.e. deltaTime 1,2,3,4....20,21,22,23,...
+# ATTENTION: do not change grouping before executing, it bases on grouping of prev stmt
+data.flights.completeSeriesOnly <- data.flights.completeSeriesOnly %>%
+  ungroup() %>%
+  group_by(flightNumber, departureDate) %>%
+  filter(
+    max(deltaTime) <= kSeriesLength
+  )
 
 # writing the results
 write.csv(data.flights.grouped, "data-flights-grouped.csv")

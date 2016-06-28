@@ -27,9 +27,6 @@ if(!exists("global_labeller", mode="function")) {
   source("FFV_Analytics_QBase.R")
 }
 
-# install.packages("modeest")
-library(modeest)
-
 # filter lowest prices for each flight
 data.q0 <- data.flights.completeSeriesOnly %>%
   ungroup() %>%
@@ -42,6 +39,7 @@ data.q0 <- data.flights.completeSeriesOnly %>%
 # -- BY REQUEST WEEKDAY, DESTINATION AND CARRIER
 # count by request weekday, destination AND carrier
 data.q0.byRequestWeekday <- data.q0 %>%
+  ungroup() %>%
   group_by(requestWeekday, carrier, destination) %>%
   summarise(
     n = n()

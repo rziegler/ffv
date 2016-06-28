@@ -73,8 +73,11 @@ data.destinations.condensed <- data.destinations %>%
   group_by(
     destination, destinationName
   ) %>% summarise(
-    n = n()
-  ) %>% select (destination, destinationName)
+    n = n(),
+    flightsPerDay = round(mean(flightsPerDay), digits=1),
+    durationMin = min(durationMin),
+    durationMax = max(durationMax)
+  ) %>% select (destination, destinationName, flightsPerDay, durationMin, durationMax)
 
 write.csv(data.destinations, "data-destinations.csv", row.names = FALSE)
 write.csv(data.destinations.condensed, "data-destinations-condensed.csv", row.names = FALSE)
