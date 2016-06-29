@@ -26,8 +26,18 @@ if(!exists("global_labeller", mode="function")) {
   source("FFV_Analytics_QBase.R")
 }
 
-# --- filter data
-# filter lowest prices for each flight
+# filter data
+
+# --- constants for calculating complete weeks buckets
+kEarliestDepartureDate <- min(data.flights.completeSeriesOnly$departureDate)
+kLatestDepartureDate <- max(data.flights.completeSeriesOnly$departureDate)
+
+
+# --- calculate the offset to shift the departure date so that it "starts" on a monday for the grouping afterwards
+# --- ISO week starts on monday, wday from POSIXlt start on sunday with 0, monday is 1, ... saturday is 5
+kWeekdayShiftOffset <- (as.POSIXlt(kEarliestDepartureDate)$wday-1)%%7 # since wday is 0-based subtract 1, mod 7 for staying between 0..6
+
+# --- filter lowest prices for each flight
 data.q1 <- data.flights.completeSeriesOnly %>%
   ungroup() %>%
   arrange(flightNumber, departureDate, requestDate) %>%  # sorting 
@@ -35,7 +45,9 @@ data.q1 <- data.flights.completeSeriesOnly %>%
   filter(
     pmin == min(pmin)
   ) %>% mutate(
-    kw = ISOweek(as.IDate(departureDate-1))
+    # shift the departure date so that it "starts" on a monday for the grouping afterwards
+    # -- ISO week starts on monday, wday from POSIXlt start on sunday with 0, monday is 1, ... saturday is 5
+    kw = ISOweek(as.IDate(departureDate-kWeekdayShiftOffset))
   )
 
 # --- make each lowest price unique
@@ -57,10 +69,6 @@ data.q1.unique <- data.q1 %>%
   )
 
 # filter dates which are not in a complete week
-# --- constants for calculating complete weeks buckets
-kEarliestDepartureDate <- min(data.flights.completeSeriesOnly$departureDate)
-kLatestDepartureDate <- max(data.flights.completeSeriesOnly$departureDate)
-
 departureDateDiff <- as.numeric(kLatestDepartureDate - kEarliestDepartureDate)
 rightBoundDate <- kLatestDepartureDate - ((departureDateDiff + 1) %% 7)
 
@@ -166,42 +174,46 @@ SavePlot("q1-departure-wday-max-price-all-2.pdf")
 
 
 # same as above but additionally grouped by agent
-data.q1.agent <- data.flights.completeSeriesOnly %>%
-  ungroup() %>%
-  arrange(flightNumber, departureDate, agentName, requestDate) %>%  # sorting 
-  group_by(flightNumber, departureDate, agentName) %>%
-  filter(
-    pmin == min(pmin)
-  )
 
-# --- make each lowest price unique
-data.q1.agent.unique <- data.q1.agent %>%
-  ungroup() %>%
-  group_by(flightNumber, carrier, origin, destination, 
-           departureDate, departureTime, arrivalDate, arrivalTime, duration, departureWeekday, pmin) %>%
-  arrange(flightNumber, departureDate, departureTime, agentName, requestDate) %>%
-  summarise(
-    requestDate = first(requestDate),  # keep the first
-    requestWeekday = first(requestWeekday),
-    deltaTime = first(deltaTime),
-    agentName = first(agentName),
-    agentType = first(agentType)
-  )
+## DOES IT MAKE SENSE HERE???? I THINK NOT AT THE MO
 
-# count by departure weekday for each flight with same carrier for each agent
-data.q1.agent.byDepartureWeekday <- data.q1.agent.unique %>%
-  group_by(carrier, departureWeekday, destination, agentName) %>%
-  summarise(
-    n = n()
-  )
 
-ggplot(data = data.q1.agent.byDepartureWeekday, 
-       aes(x = departureWeekday, 
-           y = n,
-           fill = carrier)) + 
-  geom_bar(stat="identity") +
-  facet_grid(destination ~ agentName, scales="free_y", labeller = global_labeller) + 
-  ggtitle("Number of cheapest flights on departure weekday for each agent") +
-  xlab("departure weekday") +
-  ylab("number of cheapest flights")
-SavePlot("q1-departure-wday-agent.pdf")
+# data.q1.agent <- data.flights.completeSeriesOnly %>%
+#   ungroup() %>%
+#   arrange(flightNumber, departureDate, agentName, requestDate) %>%  # sorting 
+#   group_by(flightNumber, departureDate, agentName) %>%
+#   filter(
+#     pmin == min(pmin)
+#   )
+# 
+# # --- make each lowest price unique
+# data.q1.agent.unique <- data.q1.agent %>%
+#   ungroup() %>%
+#   group_by(flightNumber, carrier, origin, destination, 
+#            departureDate, departureTime, arrivalDate, arrivalTime, duration, departureWeekday, pmin) %>%
+#   arrange(flightNumber, departureDate, departureTime, agentName, requestDate) %>%
+#   summarise(
+#     requestDate = first(requestDate),  # keep the first
+#     requestWeekday = first(requestWeekday),
+#     deltaTime = first(deltaTime),
+#     agentName = first(agentName),
+#     agentType = first(agentType)
+#   )
+# 
+# # count by departure weekday for each flight with same carrier for each agent
+# data.q1.agent.byDepartureWeekday <- data.q1.agent.unique %>%
+#   group_by(carrier, departureWeekday, destination, agentName) %>%
+#   summarise(
+#     n = n()
+#   )
+# 
+# ggplot(data = data.q1.agent.byDepartureWeekday, 
+#        aes(x = departureWeekday, 
+#            y = n,
+#            fill = carrier)) + 
+#   geom_bar(stat="identity") +
+#   facet_grid(destination ~ agentName, scales="free_y", labeller = global_labeller) + 
+#   ggtitle("Number of cheapest flights on departure weekday for each agent") +
+#   xlab("departure weekday") +
+#   ylab("number of cheapest flights")
+# SavePlot("q1-departure-wday-agent.pdf")
