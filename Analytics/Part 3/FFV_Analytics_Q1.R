@@ -35,7 +35,7 @@ data.q1 <- data.flights.completeSeriesOnly %>%
   filter(
     pmin == min(pmin)
   ) %>% mutate(
-    kw = ISOweek(as.IDate(departureDate))
+    kw = ISOweek(as.IDate(departureDate-1))
   )
 
 # --- make each lowest price unique
@@ -56,41 +56,42 @@ data.q1.unique <- data.q1 %>%
     agentType = first(agentType)
   )
 
-data.q1.byCalendarWeek <- data.q1.unique %>%
+# filter dates which are not in a complete week
+# --- constants for calculating complete weeks buckets
+kEarliestDepartureDate <- min(data.flights.completeSeriesOnly$departureDate)
+kLatestDepartureDate <- max(data.flights.completeSeriesOnly$departureDate)
+
+departureDateDiff <- as.numeric(kLatestDepartureDate - kEarliestDepartureDate)
+rightBoundDate <- kLatestDepartureDate - ((departureDateDiff + 1) %% 7)
+
+data.q1.completeWeeksOnly <- data.q1.unique %>%
   ungroup() %>%
-  arrange(flightNumber, destination, kw, pmin) %>%  # sort by pmin and then take the first
-  group_by(flightNumber, carrier, origin, destination, kw) %>%
+  group_by(flightNumber, departureDate) %>%
+  filter(
+    departureDate <=rightBoundDate
+  )
+
+# -- CHEAPEST FLIGHTS BY DEPARTURE WEEKDAY, CARRIER AND DESTINATION
+# only keep flights for each kw, carrier and destination with minimal price
+data.q1.minByCalendarWeek <- data.q1.completeWeeksOnly %>%
+  ungroup() %>%
+  arrange(carrier, destination, kw, pmin) %>%
+  group_by(carrier, destination, kw) %>%
+  filter(
+    pmin == first(pmin)
+  )
+
+# count by departure weekday within each carrier, destination (skip the kw here, because all weeks are joined)
+data.q1.minByCalendarWeekCounted <- data.q1.minByCalendarWeek %>%
+  ungroup() %>%
+  group_by(carrier, destination, departureWeekday) %>%
   summarise(
-    departureWeekdayMin = first(departureWeekday),
     n = n()
   )
 
-# -- BY DEPARTURE WEEKDAY, CARRIER AND DESTINATION
-# count by departure weekday for each flight with same carrier and destination
-data.q1.byCalendarWeekCounted <- data.q1.byCalendarWeek %>%
-  group_by(carrier, kw, destination) %>%
-  summarise(
-    n = n(),
-    departureWeekdayMin = 
-  )
-
-# data.q1.byDepartureWeekday <- data.q1.byDepartureWeekday %>%
-#   ungroup() %>%
-#   group_by(flightNumber, carrier, destination) %>%
-#   mutate (
-#     total = max(cumsum(n))  # calculate total n
-#   )
-# test for geom_text to write n for each stacked bar -> not working yet!! 
-# data.q1.byDepartureWeekday <- data.q1.byDepartureWeekday %>%
-#   ungroup() %>%
-#   group_by(destination, carrier, departureWeekday) %>%
-#   # arrange(flightNumber, carrier, departureWeekday, destination, n) %>%
-#   mutate (
-#     pos = cumsum(n) - (0.5*n))
-
 # plot cheapest flights distributed by request weekday for each destination
-ggplot(data = data.q1.byCalendarWeekCounted, 
-       aes(x = departureWeekdayMin, 
+ggplot(data = data.q1.minByCalendarWeekCounted, 
+       aes(x = departureWeekday, 
            y = n,
            fill = carrier)) + 
   geom_bar(stat="identity") +
@@ -102,8 +103,8 @@ ggplot(data = data.q1.byCalendarWeekCounted,
   ylab("number of cheapest flights")
 SavePlot("q1-departure-wday-all.pdf")
 
-ggplot(data = data.q1.byCalendarWeekCounted, 
-       aes(x = departureWeekdayMin, 
+ggplot(data = data.q1.minByCalendarWeekCounted, 
+       aes(x = departureWeekday, 
            y = n,
            fill = carrier)) + 
   geom_bar(stat="identity", position = "dodge") +
@@ -112,6 +113,53 @@ ggplot(data = data.q1.byCalendarWeekCounted,
   xlab("departure weekday") +
   ylab("number of cheapest flights")
 SavePlot("q1-departure-wday-all-2.pdf")
+
+
+
+# -- MOST EXPENSIVE PRICES BY DEPARTURE WEEKDAY, CARRIER AND DESTINATION
+# only keep flights for each kw, carrier and destination with maximal price
+data.q1.maxByCalendarWeek <- data.q1.completeWeeksOnly %>%
+  ungroup() %>%
+  arrange(carrier, destination, kw, pmin) %>%
+  group_by(carrier, destination, kw) %>%
+  filter(
+    pmin == last(pmin)
+  )
+
+# count by departure weekday within each carrier, destination (skip the kw here, because all weeks are joined)
+data.q1.maxByCalendarWeekCounted <- data.q1.maxByCalendarWeek %>%
+  ungroup() %>%
+  group_by(carrier, destination, departureWeekday) %>%
+  summarise(
+    n = n()
+  )
+
+# plot cheapest flights distributed by request weekday for each destination
+ggplot(data = data.q1.maxByCalendarWeekCounted, 
+       aes(x = departureWeekday, 
+           y = n,
+           fill = carrier)) + 
+  geom_bar(stat="identity") +
+  # annotate("text", x=3, y=10, label = sprintf("n=%s", data)) + 
+  # geom_text(aes(label = n, y = pos), size = 3) +
+  facet_wrap(~ destination, ncol = 5, scales="free_y", labeller = global_labeller) + 
+  ggtitle("Number of most expensive flights on departure weekday overall") +
+  xlab("departure weekday") +
+  ylab("number of most expensive flights")
+SavePlot("q1-departure-wday-max-price-all.pdf")
+
+ggplot(data = data.q1.maxByCalendarWeekCounted, 
+       aes(x = departureWeekday, 
+           y = n,
+           fill = carrier)) + 
+  geom_bar(stat="identity", position = "dodge") +
+  facet_wrap(~ destination, ncol = 5, scales="free_y", labeller = global_labeller) + 
+  ggtitle("Number of most expensive flights on departure weekday overall") +
+  xlab("departure weekday") +
+  ylab("number of most expensive flights")
+SavePlot("q1-departure-wday-max-price-all-2.pdf")
+
+
 
 # for validation of some results ;)
 # PrintMinPrice(data.flights.completeSeriesOnly, "LX332", "2016-06-01")
