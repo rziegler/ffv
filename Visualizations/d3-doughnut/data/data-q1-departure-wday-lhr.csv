@@ -1,0 +1,13 @@
+"carrier","destination","departureWeekday","n"
+"AB","LHR","Mi",4
+"AB","LHR","Do",2
+"AB","LHR","Di",1
+"BA","LHR","Mi",3
+"BA","LHR","Do",1
+"BA","LHR","Sa",3
+"BA","LHR","So",2
+"BA","LHR","Mo",6
+"LX","LHR","Mi",4
+"LX","LHR","Di",6
+"LX","LHR","Sa",5
+"LX","LHR","So",8

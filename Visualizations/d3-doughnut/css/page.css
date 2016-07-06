@@ -1,0 +1,37 @@
+/* Basic styles of container
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+
+html {
+    position: relative;
+    min-height: 100%;
+    margin-left: 10rem;
+    margin-right: 10rem;
+}
+
+body {
+    margin: 10rem 0 4rem;
+}
+
+header {
+    position: absolute;
+    background: #fff;
+    left: 0;
+    top: 0;
+    height: 10rem;
+    width: 100%;
+}
+
+footer {
+    position: fixed;
+    background: #fff;
+    left: 10rem;
+    bottom: 0;
+    height: 4rem;
+    width: 100%;
+    font-size: smaller;
+    padding: 1em 5em 0em;
+}
+
+[ng-click] {
+    cursor: pointer;
+}
