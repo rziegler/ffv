@@ -37,7 +37,6 @@ function createWeekdayPieChart(idTagName, csvFileName, weekdayColumnName) {
             count: +d.n
         };
     }, function (error, data) {
-
         if (error) throw error;
 
         // group data by destination and weekday, then sum the counts
