@@ -62,9 +62,3 @@ viz.q4 <- data.q4.diff %>%
   )
 
 ggplot(viz.q4, aes(priceMin, priceMax, color = carrier)) + geom_point()
-
-
-
-
-
-

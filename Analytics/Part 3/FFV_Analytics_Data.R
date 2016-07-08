@@ -113,7 +113,7 @@ data.flights.grouped <- data.flights.unique %>%
 # filter only complete price series (means that kSeriesLength requests for flight on day x have been fulfilled)
 
 # --- constants for series length and latest request date
-kSeriesLength <- 21 # should be multiples of 7 to have complete weeks
+kSeriesLength <- 28 # should be multiples of 7 to have complete weeks
 kLatestRequestDate <- max(data.flights.grouped$requestDate)  # latest request date from dump
 
 # --- drop incomplete series
@@ -156,7 +156,7 @@ write.csv(data.flights.grouped, "data-flights-grouped.csv")
 write.csv(data.flights.completeSeriesOnly, "data-flights-completeseries.csv")
 
 # -- for checking if all flights depart on every weekday or not
-# -- actually ICN (Seoul) only flies on DI, DO and SA, and RHO (Rhodes) does not fly on FR, all other flights depart on every weekday
+# -- actually ICN (Seoul) only flies on DI, DO and SA, and RHO (Rhodes) does not fly on FR/SO, all other flights depart on every weekday
 data.flights.destinationByWeekday <- data.flights.completeSeriesOnly %>%
   group_by(destination) %>%
   summarise(

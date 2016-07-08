@@ -98,3 +98,6 @@ ggplot(data = data.q0.agent.byRequestWeekday,
   xlab("request weekday") +
   ylab("number of cheapest flights")
 SavePlot("q0-request-wday-agent.pdf")
+
+write.csv(data.q0.byRequestWeekday, "data-q0-request-wday-all.csv", row.names = FALSE)
+write.csv(data.q0.agent.byRequestWeekday, "data-q0-request-wday-agent.csv", row.names = FALSE)

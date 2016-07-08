@@ -58,7 +58,7 @@ function horizonFfv(csvFileName, forDepartureDate) {
 
     var svg = d3.select("#chartPrice").append("div")
         .classed("svg-container", true) //container class to make it responsive
-        .append("svg")
+        //        .classed("four columns", true).append("svg")
 
     //responsive SVG needs these 2 attributes and no width and height attr
     .attr("preserveAspectRatio", "xMinYMin meet")
@@ -99,6 +99,7 @@ function horizonFfv(csvFileName, forDepartureDate) {
         svg.data([data]).call(chart);
 
         svg.append("text")
+            .style("font-size", "40px")
             .attr("transform", function (d) {
                 return "translate(10, " + 18 + ")";
             })

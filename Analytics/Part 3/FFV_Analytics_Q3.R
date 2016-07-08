@@ -25,7 +25,7 @@ if(!exists("global_labeller", mode="function")) {
 }
 
 # --- filter data
-# filter lowest and highest prices for each flight
+# filter lowest and highest prices for each flight AND agent
 data.q3 <- data.flights.completeSeriesOnly %>% 
   ungroup() %>%
   arrange(flightNumber, departureDate, requestDate) %>%  # sorting 

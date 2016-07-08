@@ -123,6 +123,8 @@ ggplot(data = data.q1.minByCalendarWeekCounted,
 SavePlot("q1-departure-wday-all-2.pdf")
 
 
+write.csv(data.q1.minByCalendarWeekCounted, "data-q1-departure-wday-all.csv", row.names = FALSE)
+
 
 # -- MOST EXPENSIVE PRICES BY DEPARTURE WEEKDAY, CARRIER AND DESTINATION
 # only keep flights for each kw, carrier and destination with maximal price
@@ -166,7 +168,6 @@ ggplot(data = data.q1.maxByCalendarWeekCounted,
   xlab("departure weekday") +
   ylab("number of most expensive flights")
 SavePlot("q1-departure-wday-max-price-all-2.pdf")
-
 
 
 # for validation of some results ;)

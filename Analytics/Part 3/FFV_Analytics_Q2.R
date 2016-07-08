@@ -69,7 +69,8 @@ data.q2.byDeltaWeek <- data.q2.unique %>%
 ggplot(data = data.q2.byDeltaWeek, 
        aes(x = weeks, 
            y = n,
-           fill = carrier)) + 
+           fill = carrier)) +
+  scale_x_continuous(trans = "reverse") +
   geom_bar(stat="identity") +
   facet_wrap(~ destination, ncol = 5, scales="free_y", labeller = global_labeller) + 
   ggtitle("Number of cheapest flights on delta weeks overall") +
@@ -81,6 +82,7 @@ ggplot(data = data.q2.byDeltaWeek,
        aes(x = weeks, 
            y = n,
            fill = carrier)) + 
+  scale_x_continuous(trans = "reverse") +
   geom_bar(stat="identity", position = "dodge") +
   facet_wrap(~ destination, ncol = 5, scales="free_y", labeller = global_labeller) + 
   ggtitle("Number of cheapest flights on delta weeks overall") +
@@ -134,10 +136,11 @@ ggplot(data = data.q2.agent.byDeltaWeek,
        aes(x = weeks, 
            y = n,
            fill = carrier)) + 
+  scale_x_continuous(trans = "reverse") +
   geom_bar(stat="identity") +
   facet_grid(destination ~ agentName, scales="free_y", labeller = global_labeller) + 
-  ggtitle("Number of cheapest flights on departure weekday for each agent") +
-  xlab("departure weekday") +
+  ggtitle("Number of cheapest flights on delta weeks overall") +
+  xlab("delta week (number of weeks before departure)") +
   ylab("number of cheapest flights")
 SavePlot("q2-departure-weeks-agent.pdf")
 
