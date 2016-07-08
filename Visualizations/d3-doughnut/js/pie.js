@@ -23,9 +23,16 @@ function createWeekdayPieChart(idTagName, csvFileName, weekdayColumnName) {
             return d.values;
         });
 
-    var svg = d3.select("#" + idTagName).append("svg")
-        .attr("width", width)
-        .attr("height", height)
+    var svg = d3.select("#" + idTagName).append("div")
+        .classed("svg-container-pie", true) //container class to make it responsive
+        .append("svg")
+        //responsive SVG needs these 2 attributes and no width and height attr
+        .attr("preserveAspectRatio", "xMinYMin meet")
+        .attr("viewBox", "0 0 " + width + " " + height)
+        //class to make it responsive
+        .classed("svg-content-responsive", true)
+        //        .attr("width", width)
+        //        .attr("height", height)
         .append("g")
         .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 

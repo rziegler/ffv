@@ -29,18 +29,6 @@ function horizonSample() {
 
         // Render the chart.
         svg.data([data]).call(chart);
-
-        //        // Enable mode buttons.
-        //        d3.selectAll("#horizon-controls input[name=mode]").on("change", function () {
-        //            svg.call(chart.duration(0).mode(this.value));
-        //        });
-        //
-        //        // Enable bands buttons.
-        //        d3.selectAll("#horizon-bands button").data([-1, 1]).on("click", function (d) {
-        //            var n = Math.max(1, chart.bands() + d);
-        //            d3.select("#horizon-bands-value").text(n);
-        //            svg.call(chart.duration(1000).bands(n).height(height / n));
-        //        });
     });
 }
 
@@ -58,15 +46,13 @@ function horizonFfv(csvFileName, forDepartureDate) {
 
     var svg = d3.select("#chartPrice").append("div")
         .classed("svg-container", true) //container class to make it responsive
-        //        .classed("four columns", true).append("svg")
-
-    //responsive SVG needs these 2 attributes and no width and height attr
-    .attr("preserveAspectRatio", "xMinYMin meet")
-        .attr("viewBox", "0 0 1360 200")
+        .classed("twelve columns", true)
+        .append("svg")
+        //responsive SVG needs these 2 attributes and no width and height attr
+        .attr("preserveAspectRatio", "xMinYMin meet")
+        .attr("viewBox", "0 0 " + width + " " + height)
         //class to make it responsive
         .classed("svg-content-responsive", true);
-    //    .attr("width", width)
-    //        .attr("height", height);
 
     d3.csv(csvFileName, function (d) {
         return {
@@ -99,7 +85,7 @@ function horizonFfv(csvFileName, forDepartureDate) {
         svg.data([data]).call(chart);
 
         svg.append("text")
-            .style("font-size", "40px")
+            .style("font-size", "4=20px")
             .attr("transform", function (d) {
                 return "translate(10, " + 18 + ")";
             })
