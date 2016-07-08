@@ -56,7 +56,7 @@
     –––––––––––––––––––––––––––––––––––––––––––––––––– -->
     <script src="js/pie.js"></script>
     <script src="js/horiz.js"></script>
-
+    <script src="js/savings.js"></script>
 </head>
 
 <body>
@@ -83,13 +83,13 @@
 
     </section>
     <section class="row">
-    <article class="twelve columns">
-        <h5>Preisentwicklung nach Abflugtag</h5>
-        <!--            <div id="chartPrice" class="row"></div>-->
-        <div id="chartPrice" class="row"></div>
-    </article>
+        <article class="twelve columns">
+            <h5>Preisentwicklung nach Abflugtag</h5>
+            <!--            <div id="chartPrice" class="row"></div>-->
+            <div id="chartPrice" class="row"></div>
+        </article>
 
-</section>
+    </section>
 
     <!--
     <div id="horizon-controls">
@@ -112,6 +112,12 @@
     <script>
         createWeekdayPieChart("chartRequestDay", "data/data-q0-request-wday-lhr.csv", "requestWeekday");
         createWeekdayPieChart("chartDepartureDay", "data/data-q1-departure-wday-lhr.csv", "departureWeekday");
+
+
+        savingsFfv("data/data-lx316.csv");
+
+
+
 
         horizonFfv("data/data-lx316.csv", "2016-06-07");
         horizonFfv("data/data-lx316.csv", "2016-06-08");
