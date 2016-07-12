@@ -26,6 +26,7 @@
     <link rel="stylesheet" href="css/skeleton.css">
     <link rel="stylesheet" href="css/chart.css">
     <link rel="stylesheet" href="css/page.css">
+    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
 
 
     <style>
@@ -63,7 +64,7 @@
     <header>
         <h1>Flight Fare Visualization: Zurich - London</h1>
     </header>
-    <section class="row">
+    <section class="row top">
         <article class="three columns">
             <h5>An welchem Wochentag soll ich buchen?</h5>
             <div id="chartRequestDay"></div>
@@ -113,11 +114,7 @@
         createWeekdayPieChart("chartRequestDay", "data/data-q0-request-wday-lhr.csv", "requestWeekday");
         createWeekdayPieChart("chartDepartureDay", "data/data-q1-departure-wday-lhr.csv", "departureWeekday");
 
-
         savingsFfv("data/data-lx316.csv");
-
-
-
 
         horizonFfv("data/data-lx316.csv", "2016-06-07");
         horizonFfv("data/data-lx316.csv", "2016-06-08");

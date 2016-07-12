@@ -32,6 +32,10 @@ footer {
     padding: 1em 5em 0em;
 }
 
+.top {
+    margin-bottom: 100px;
+}
+
 [ng-click] {
     cursor: pointer;
 }

@@ -58,28 +58,46 @@ function savingsFfv(csvFileName) {
         var meanPercentRounded = Math.round(meanPercent * 100)
         console.log(meanPercentRounded);
 
-        var step = (width - 40) / 10;
+        var div = d3.select("#chartSavings").append("div")
+            .classed("svg-container", true) //container class to make it responsive
+            .classed("twelve columns", true);
+
+
+        var step = (width) / 10;
         var g = svg
             .append("g")
-            .attr("transform", "translate(" + 10 + "," + 10 + ")");
+            .attr("transform", "translate(" + 12 + "," + 12 + ")");
         for (i = 0; i < 100; i++) {
             console.log("!" + ((i % 10)) + ".." + (Math.round(i / 10)));
-            g.append("circle").attr("cx", function (d) {
+            g.append("circle")
+                .attr("cx", function (d) {
                     return (i % 10) * step;
                 })
                 .attr("cy", function (d) {
                     return Math.floor(i / 10) * step;
                 })
                 .attr("r", function (d) {
-                    return 5;
+                    return 12;
                 })
                 .style("fill", function (d) {
-                    if (i <= meanPercentRounded) {
+                    if (i > meanPercentRounded) {
                         return "#454545";
                     } else {
-                        return "#17960E";
+                        return "#ff8c00";
                     }
                 });
+
+            //            div.append("p")
+            //                .html("<i class='fa fa-usd'  aria-hidden='true '></i>")
+            //                .style("display", "inline")
+            //                .style("position", "relative");
+            //
+            //            if (i <= meanPercentRounded) {
+            //                console.log("sdfdsfd");
+            //                div.select("p").style("color", "#454545");
+            //            } else {
+            //                div.select("p").style("color", "#ff8c00");
+            //            }
         }
 
         console.log(meanPercent);
