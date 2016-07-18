@@ -4,6 +4,7 @@ import java.util.*;
 
 List<Price> prices;
 
+
 int offsetY = 100;
 int spaceBetweenLines = 5;
 int lineHeight = 10;
@@ -20,24 +21,25 @@ int selectedPriceIndex;
 
 boolean selectedPriceDrawn = false;
 
+
 public enum Mode {
   VERTEX_LINE, VERTEX_POINTS;
 }
 
 void setup() {
   //size(1200, 900);
+  colorMode(RGB, 255);
+  background(255);
+  smooth();
 
   prices = loadData();
+
   int myHeight = prices.size()* lineWithSpace + offsetY;
   println(prices.size() + "::" + myHeight);
   size(1200, 34750); //23200 is the value of myHeight
   if (myHeight != height) { 
     throw new RuntimeException("Adjust the size of the canvas!");
   }
-  background(255);
-  smooth();
-
-  //noLoop();
   drawAllPrices();
 }
 
@@ -77,7 +79,7 @@ void mouseClicked() {
 
 void keyPressed() {
   if (key == 's' || key == 'S') {
-    save(String.format("prices-%s.tif", currentPriceMode));
+    save(String.format("prices-%s.tif", currentPriceMode).toLowerCase());
   }
 
   if (key == 'a' || key == 'A') {
@@ -90,14 +92,6 @@ void keyPressed() {
     clearCanvas();
     drawAllPrices();
   }
-}
-
-private void clearCanvas() {
-  pushStyle();
-  noStroke();
-  fill(255);
-  rect(0, 0+offsetY- lineWithSpace/2, width, height-offsetY+ lineWithSpace/2);
-  popStyle();
 }
 
 private void drawAllPrices() {
@@ -140,6 +134,15 @@ private void drawVertexes(List<Integer> prices, int xStepSize, int yBase, int yB
   }
 }
 
+private void clearCanvas() {
+  pushStyle();
+  colorMode(RGB, 255);
+  noStroke();
+  fill(255);
+  rect(0, 0+offsetY- lineWithSpace/2, width, height-offsetY+ lineWithSpace/2);
+  popStyle();
+}
+
 private List<Price> loadData() {
   Table data = loadTable("data-all.csv", "header");
 
@@ -154,8 +157,6 @@ private List<Price> loadData() {
     String de = row.getString("destination");
     int prel = row.getInt("priceChangeRelBoolean");
     int pabs = row.getInt("priceChangeAbsBoolean");
-
-
 
     if (!de.equals(currentPrice.destination)) {
       destinationCount++;
