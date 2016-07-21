@@ -104,7 +104,7 @@ private void drawAllPrices() {
 }
 
 private void drawPrice(List<Integer> prices, Mode mode, float strokeWeight, color col, int i) {
-  drawPrice(prices, mode, strokeWeight, col, width/(prices.size()-1), lineWithSpace * i + offsetY, lineHeight);
+  drawPrice(prices, mode, strokeWeight, col, width/(prices.size()-1), lineWithSpace * i + offsetY, lineHeight); //<>//
 }
 
 private void drawPrice(List<Integer> prices, Mode mode, float strokeWeight, color col, int xStepSize, int yBase, int yBandWidth) {
@@ -129,7 +129,7 @@ private void drawPrice(List<Integer> prices, Mode mode, float strokeWeight, colo
 private void drawVertexes(List<Integer> prices, int xStepSize, int yBase, int yBandWidth) {
   int idx = 0;
   for (Integer p : prices) {
-    vertex(idx * xStepSize, yBase + yBandWidth/2*(-1*p));
+    vertex(idx * xStepSize, yBase + yBandWidth/2*(-1*p)); //<>//
     idx++;
   }
 }
@@ -157,10 +157,12 @@ private List<Price> loadData() {
     String de = row.getString("destination");
     int prel = row.getInt("priceChangeRelBoolean");
     int pabs = row.getInt("priceChangeAbsBoolean");
+    
+    println(fn);
 
     if (!de.equals(currentPrice.destination)) {
       destinationCount++;
-      println("cnt " + destinationCount + "::" + de);
+      //println("cnt " + destinationCount + "::" + de + "::" + );
     }
 
     if (fn.equals(currentPrice.flightNumber) && dd.equals(currentPrice.departureDate)) {
@@ -169,12 +171,13 @@ private List<Price> loadData() {
     } else {
       currentPrice = new Price(fn, dd);
       currentPrice.destination = de;
+      currentPrice.addPrice(pabs, PriceMode.ABSOLUTE);
+      currentPrice.addPrice(prel, PriceMode.RELATIVE);
 
       //println("cnt " + destinationCount + "::" + de);
       colorMode(HSB, 45);
       currentPrice.priceColor = color(destinationCount, 45, 45);
-      currentPrice.addPrice(pabs, PriceMode.ABSOLUTE);
-      currentPrice.addPrice(prel, PriceMode.RELATIVE);
+      
       result.add(currentPrice);
     }
   }

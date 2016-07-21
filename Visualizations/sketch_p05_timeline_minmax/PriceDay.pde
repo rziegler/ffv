@@ -10,4 +10,5 @@ class PriceDay {
     this.date = date;
     this.deltaDays = deltaDays;
   }
+  
 }

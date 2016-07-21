@@ -4,44 +4,55 @@ class Price {
   String departureDate;
   String destination;
 
-  List<Float> prices;
-  Float min = Float.MAX_VALUE;
-  Float max = Float.MIN_VALUE;
-
+  List<PriceDay> prices;
+  List<PriceDay> mins;
+  List<PriceDay> maxs;
+  
   color priceColor;
 
   Price(String flightNumber, String departureDate) {
     this.flightNumber = flightNumber;
     this.departureDate = departureDate;
 
-    this.prices = new ArrayList<Float>();
+    this.prices = new ArrayList<PriceDay>();
+    
+    mins = new ArrayList<PriceDay>();
+    mins.add(new PriceDay(Float.MAX_VALUE, "xx-xx-xxxx", Integer.MAX_VALUE));
+    maxs = new ArrayList<PriceDay>();
+    maxs.add(new PriceDay(Float.MIN_VALUE, "xx-xx-xxxx", Integer.MIN_VALUE));
   }
 
-  public void addPrice(float price) {
-    Float value = new Float(price);
+  public void addPrice(float price, String date, int deltaDays) {
+    PriceDay value = new PriceDay(price, date, deltaDays);
     prices.add(value);
-    if (value < min) {
-      min = value;
+    if (value.price < mins.get(0).price) {
+      mins.clear();
+      mins.add(value);
+    } else if(value.price == mins.get(0).price) {
+      mins.add(value);
     }
 
-    if (value > max) {
-      max = value;
+    if (value.price > maxs.get(0).price) {
+      maxs.clear();
+      maxs.add(value);
+    } else if(value.price == maxs.get(0).price) {
+      maxs.add(value);
     }
   }
 
-  public float getMin() {
-    return min;
+  public List<PriceDay> getMin() {
+    return mins;
   }
 
-  public float getMax() {
-    return max;
+  public List<PriceDay> getMax() {
+    return maxs;
   }
 
   public String toString() {
     StringBuffer sb = new StringBuffer();
     sb.append(destination +": "+ flightNumber +" on " + departureDate + " > ");
-    for (Float v : prices) {
-      sb.append(v +":");
+    for (PriceDay v : prices) {
+      sb.append(v.price +":");
     }
     return sb.toString();
   }
