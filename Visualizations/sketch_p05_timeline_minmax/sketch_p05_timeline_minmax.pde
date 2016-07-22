@@ -9,8 +9,8 @@ static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
 List<Price> prices;
 
-int width = 200;
-int height = 100;
+int vizWidth = 200;
+int vizHeight = 100;
 
 int paddingX = 5;
 int paddingY = 5;
@@ -18,7 +18,7 @@ int tickLength = 2;
 int vizCols = 5;
 
 int startX = 0+paddingX;
-int endX = width-paddingX;
+int endX = vizWidth-paddingX;
 
 int seriesLength;
 
@@ -30,19 +30,19 @@ void setup() {
 
   prices = loadData();
   
-  int myHeight = prices.size()/vizCols * height;
+  int myHeight = prices.size()/vizCols * vizHeight;
   println(prices.size()/vizCols + "::" + myHeight);
-  int myWidth = vizCols * width + 2*10;
+  int myWidth = vizCols * vizWidth + 2*10;
   println(vizCols + "::" + myWidth);
   
-  size(1020, 23200); //23200 is the value of myHeight
+  size(1020, 32600); //23200 is the value of myHeight
   
-  //if (myHeight != height) { 
-  //  throw new RuntimeException(String.format("Adjust the size of the canvas (height)! Actual %d, Expected %d.", height, myHeight));
-  //}
-  //if (myWidth != width) { 
-  //  throw new RuntimeException(String.format("Adjust the size of the canvas (width)! Actual %d, Expected %d.", width, myWidth));
-  //}
+  if (myHeight != height) { 
+    throw new RuntimeException(String.format("Adjust the size of the canvas (height)! Actual %d, Expected %d.", height, myHeight));
+  }
+  if (myWidth != width) { 
+    throw new RuntimeException(String.format("Adjust the size of the canvas (width)! Actual %d, Expected %d.", width, myWidth));
+  }
   
   seriesLength = prices.get(0).prices.size();
   int timelineTicks = seriesLength + 1; // + 1 because departure date is also on the timeline
@@ -50,8 +50,8 @@ void setup() {
 
   println(String.format("Creating viz for %s prices.", prices.size()));
   for (int i=0; i<prices.size(); i++) {
-    int tX = 10+(i%vizCols)*width;
-    int tY = 10+(i/vizCols)*height;
+    int tX = 10+(i%vizCols)*vizWidth;
+    int tY = 10+(i/vizCols)*vizHeight;
     
     Price p = prices.get(i);
     drawBox(tX, tY);
@@ -68,23 +68,23 @@ void draw() {
 
 void keyPressed() {
   if (key == 's' || key == 'S') {
-    save("p05.tif");
+    save(String.format("p05-series%d.tif", seriesLength));
   }
 }
 
 private void drawBox(int translateX, int translateY) {
   translate(translateX, translateY);
-  rect(0, 0, width, height);
+  rect(0, 0, vizWidth, vizHeight);
   translate(-translateX, -translateY);
 }
 
 private void drawTimeline(int translateX, int translateY, int ticks) {
   translate(translateX, translateY);
-  line(startX, height/2, endX, height/2);
+  line(startX, vizHeight/2, endX, vizHeight/2);
 
   for (int i=0; i<ticks; i++) {
     float t = map(i, 0, ticks-1, 0, endX - startX);
-    line(t+paddingX, height/2-tickLength, t+paddingX, height/2+tickLength);
+    line(t+paddingX, vizHeight/2-tickLength, t+paddingX, vizHeight/2+tickLength);
   }
   translate(-translateX, -translateY);
 }
@@ -106,10 +106,10 @@ private void drawArc(int translateX, int translateY, int seriesLength, float pri
   float start = map(from, 0, seriesLength, 0, endX - startX);
   float end = map(to, 0, seriesLength, 0, endX - startX);
   float arcWidth = end-start;
-  float arcHeight = map(end-start, 0, end, 10, height-10*paddingY);
+  float arcHeight = map(end-start, 0, end, 10, vizHeight-10*paddingY);
 
   strokeWeight(price/100);
-  arc(paddingX + start + (end-start)/2, height/2, arcWidth, arcHeight, PI, 2*PI);
+  arc(paddingX + start + (end-start)/2, vizHeight/2, arcWidth, arcHeight, PI, 2*PI);
   popStyle();
   translate(-translateX, -translateY);
 }
