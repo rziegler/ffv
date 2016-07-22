@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+
+<!--[if lt IE 7 ]> <html lang="en-us" dir="ltr" class="no-js ie6" xmlns="http://www.w3.org/1999/xhtml" xmlns:og="http://ogp.me/ns#" xmlns:fb="https://www.facebook.com/2008/fbml"> <![endif]-->
+<!--[if IE 7 ]>    <html lang="en-us" dir="ltr" class="no-js ie7" xmlns="http://www.w3.org/1999/xhtml" xmlns:og="http://ogp.me/ns#" xmlns:fb="https://www.facebook.com/2008/fbml"> <![endif]-->
+<!--[if IE 8 ]>    <html lang="en-us" dir="ltr" class="no-js ie8" xmlns="http://www.w3.org/1999/xhtml" xmlns:og="http://ogp.me/ns#" xmlns:fb="https://www.facebook.com/2008/fbml"> <![endif]-->
+<!--[if IE 9 ]>    <html lang="en-us" dir="ltr" class="no-js ie9" xmlns="http://www.w3.org/1999/xhtml" xmlns:og="http://ogp.me/ns#" xmlns:fb="https://www.facebook.com/2008/fbml"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!-->
+<html lang="en-us" dir="ltr" class="no-js" xmlns="http://www.w3.org/1999/xhtml" xmlns:og="http://ogp.me/ns#" xmlns:fb="https://www.facebook.com/2008/fbml">
+<!--<![endif]-->
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+    <meta property="og:site_name" content="Trulia Insights" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="House Hunting All Day, Every Day" />
+    <meta property="og:image" content="http://insights.truliablog.com/vis/tru247/pin-img.png" />
+    <meta property="og:url" content="http://insights.truliablog.com/vis/tru247/" />
+    <meta property="og:description" content="Most people search for homes on Mondays at 9:00 PM. When are you window shopping?" />
+    <meta property="og:admins" content="1033586731,1213673,565608214" />
+    <meta property="fb:app_id" content="179777705408709" />
+
+    <!-- Design and code by Joe Golike @golike for Trulia.com -->
+
+    <title>House Hunting All Day, Every Day - Trulia Insights</title>
+
+    <link rel="stylesheet" media="all" href="../lib/css/insights-1.0.css?v=1.0" />
+    <link rel="stylesheet" media="all" href="tru247.css?v=1.0" />
+
+    <!--[if lt IE 9]>
+		<link rel="stylesheet" type="text/css" href="ie.css?v=1.0"/>
+		<![endif]-->
+
+<!--
+    <script src="http://use.typekit.com/dkx5efl.js"></script>
+<script>
+    try {
+        Typekit.load();
+    } catch (e) {}
+</script>
+-->
+
+</head>
+
+<body>
+    <div id="truliaBar"><a href="/">Back to Trulia Insights</a></div>
+    <div id="container">
+
+        <div id="header">
+<!--
+            <ul id="share2">
+    <li class="share_fblike">
+        <div id="fb-root"></div>
+        <script src="http://connect.facebook.net/en_US/all.js#xfbml=1"></script>
+        <fb:like href="http://insights.truliablog.com/vis/tru247/" send="false" layout="box_count" show_faces="false"></fb:like>
+    </li>
+    <li class="share_twitter"><a href="http://twitter.com/share" class="twitter-share-button" data-count="vertical" data-via="trulia" data-text="We can search for our dream home all day long (thanks to technology), but do we? #datavis #truliainsights">Tweet</a>
+        <script src="http://platform.twitter.com/widgets.js"></script>
+    </li>
+    <li class="share_google">
+        <g:plusone size="tall" href="http://insights.truliablog.com/vis/tru247/"></g:plusone>
+        <script>
+            (function () {
+                var po = document.createElement('script');
+                po.type = 'text/javascript';
+                po.async = true;
+                po.src = 'https://apis.google.com/js/plusone.js';
+                var s = document.getElementsByTagName('script')[0];
+                s.parentNode.insertBefore(po, s);
+            })();
+        </script>
+    </li>
+    <li class="share_stumble">
+        <script src="http://www.stumbleupon.com/hostedbadge.php?s=5&r=http://insights.truliablog.com/vis/tru247/"></script>
+    </li>
+</ul>
+-->
+
+            <div id="title">
+                <h1>House Hunting All Day, Every Day</h1>
+                <p id="subtitle">Most people search for homes on Mondays at 9:00 PM. When are you window shopping?</p>
+            </div>
+        </div>
+        <div id="old_browser_msg">We're sorry but your browser is really old and can't handle the full interactive experience. We recommend you upgrade to the latest version as soon as possible.</div>
+        <div id="legend" class="rbow2">
+            <ul>
+                <li class="q1-11"></li>
+                <li class="q2-11"></li>
+                <li class="q3-11"></li>
+                <li class="q4-11"></li>
+                <li class="q5-11"></li>
+                <li class="q6-11"></li>
+                <li class="q7-11"></li>
+                <li class="q8-11"></li>
+                <li class="q9-11"></li>
+                <li class="q10-11"></li>
+                <li class="q11-11"></li>
+            </ul>
+            <p class="more">more traffic</p>
+            <p class="less">less traffic</p>
+        </div>
+
+        <div id="vis"></div>
+        <div id="poweredby" class="old_browsers"><a href="http://trulia.com">Powered by Trulia</a></div>
+        <div id="states_nav">
+
+            <div class="controls">
+                <fieldset id="type">
+                    <input type="radio" id="type_all" name="type" value="all" checked="checked" />
+                    <label for="type_all" class="sel"><span class="all">All Traffic</span></label>
+                    <input type="radio" id="type_pc" name="type" value="pc" />
+                    <label for="type_pc"><span class="pc">Computer</span></label>
+                    <input type="radio" id="type_mob" name="type" value="mob" />
+                    <label for="type_mob"><span class="mob">Mobile</span></label>
+                </fieldset>
+                <fieldset id="state">
+                    <input type="radio" id="state_all" name="state" value="all" checked="checked" />
+                    <label id="state_all_label" for="state_all" class="sel"><span class="all">All States</span></label>
+                </fieldset>
+            </div>
+            <div id="map"></div>
+        </div>
+        <ul id="ie8_percents">
+            <li class="pc"><span>82%</span> Computer</li>
+            <li class="mob"><span>18%</span> Mobile</li>
+        </ul>
+
+        <div id="wtf">
+            <div id="poweredby"><a href="http://trulia.com">Powered by Trulia</a></div>
+            <h2>All States</h2>
+            <div id="pc2mob">
+                <div class="svg"></div>
+                <ul>
+                    <li class="pc"><span>82%</span> Computer</li>
+                    <li class="mob"><span>18%</span> Mobile</li>
+                </ul>
+            </div>
+            <div id="hourly_values">
+                <div class="svg"></div>
+                <p class="subtitle">All traffic daily</p>
+            </div>
+        </div>
+        <div id="footer">Based on traffic on <a href="http://trulia.com">Trulia.com</a> and <a href="http://www.trulia.com/mobile/iphone/">Trulia Mobile</a> between June and August 2011. "Computer" traffic includes all house hunting activity coming from desktops and laptop computers while "Mobile" includes app and mobile web traffic from cell phones and tablets. Times are normalized for their respective timezones.</div>
+
+    </div>
+</body>
+<script src="../lib/js/jquery-1.6.2.min.js"></script>
+<script src="../lib/js/d3-2.1.1/d3.min.js"></script>
+<script src="../lib/js/d3-2.1.1/d3.layout.min.js"></script>
+<script src="../lib/js/insights.js?v=1.0"></script>
+<script src="tru247.js?v=1.01"></script>
+
+
+<!-- Google Analytics -->
+<script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-17793303-3']);
+    _gaq.push(['_trackPageview']);
+
+    (function () {
+        var ga = document.createElement('script');
+        ga.type = 'text/javascript';
+        ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0];
+        s.parentNode.insertBefore(ga, s);
+    })();
+</script>
+
+</html>
