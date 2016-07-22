@@ -113,7 +113,7 @@ data.flights.grouped <- data.flights.unique %>%
 # filter only complete price series (means that kSeriesLength requests for flight on day x have been fulfilled)
 
 # --- constants for series length and latest request date
-kSeriesLength <- 28 # should be multiples of 7 to have complete weeks
+kSeriesLength <- 49 # should be multiples of 7 to have complete weeks
 kLatestRequestDate <- max(data.flights.grouped$requestDate)  # latest request date from dump
 
 # --- drop incomplete series
