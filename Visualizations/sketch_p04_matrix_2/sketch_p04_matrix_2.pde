@@ -3,20 +3,38 @@ import java.util.ArrayList;
 import java.util.*;
 import java.lang.StringBuffer;
 import java.lang.Math;
-import java.text.SimpleDateFormat;
 
-static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-
-// for moving the canvas around
-int centerX = 0, centerY = 0, offsetX = 0, offsetY = 0;
-float zoom = 1.5;
-
-boolean enableMoving = false;
+public enum Destination {
+  AMS, 
+    BEG, 
+    BKK, 
+    BOM, 
+    DXB, 
+    GRU, 
+    ICN, 
+    IST, 
+    JFK, 
+    KEF, 
+    LHR, 
+    MAD, 
+    MLA, 
+    NRT, 
+    PEK, 
+    RHO, 
+    RIX, 
+    SIN, 
+    SVO, 
+    YYZ
+}
 
 List<Price> prices;
+Map<Destination, List<Price>> pricesPerDestination;
 
 int rowWidth = 10;
 int rowHeight = 20;
+
+int numberOfRows;
+int maxNumOfFlights; // max number of flights
 
 int paddingX = 5;
 int paddingY = 5;
@@ -29,23 +47,20 @@ void setup() {
   colorMode(RGB, 255);
   background(255);
 
-  // moving canvas
-  centerX = 0;
-  centerY = 0;  
-  cursor(HAND);
-  smooth();
-
-  smooth();
-
   prices = loadData();
+  maxNumOfFlights = prices.size(); // if all destinations in one row
+  numberOfRows = 1;
 
-  int myHeight = prices.size() * rowHeight + 2*paddingX;
+  pricesPerDestination = segmentData(prices);
+  numberOfRows = 1;// Destination.values().length;
+
+  int myHeight = maxNumOfFlights * rowHeight + 2*paddingX;
   println(prices.size() + "::" + myHeight);
 
-  int myWidth = prices.get(0).prices.size() * rowWidth + 2*paddingY + marginRightY;
+  int myWidth = numberOfRows * (prices.get(0).prices.size() * rowWidth + paddingY + marginRightY) + paddingY + marginRightY;
   println(prices.get(0).prices.size() + "::" + myWidth);
 
-  size(650, 32690); //23200 is the value of myHeight
+  size(800, 7930); //23200 is the value of myHeight
 
   if (myHeight != height) { 
     throw new RuntimeException(String.format("Adjust the size of the canvas (height)! Actual %d, Expected %d.", height, myHeight));
@@ -56,38 +71,18 @@ void setup() {
 
   seriesLength = prices.get(0).prices.size();
 
-  drawViz();
+  //drawViz();
+  //drawVizForAllDestinations();
+  drawAndSaveVizForAllDestinations();
 }
 
 void draw() {
-  if (enableMoving) {
-    background(255);
-
-    if (mousePressed == true) {
-      centerX = mouseX-offsetX;
-      centerY = mouseY-offsetY;
-    } 
-
-    translate(centerX, centerY);
-    scale(zoom);
-
-    drawViz();
-  }
 }
 
 void keyPressed() {
   if (key == 's' || key == 'S') {
     save(String.format("p04-series%d.tif", seriesLength));
   }
-
-  // zoom
-  if (keyCode == UP) zoom += 0.05;
-  if (keyCode == DOWN) zoom -= 0.05;
-}
-
-void mousePressed() {
-  offsetX = mouseX-centerX;
-  offsetY = mouseY-centerY;
 }
 
 private void drawViz() {
@@ -97,6 +92,57 @@ private void drawViz() {
     int tY = paddingY + i*rowHeight;
 
     Price p = prices.get(i);
+    drawPrices(tX, tY, p);
+    drawLegend(tX+seriesLength*rowWidth+paddingX, tY, p);
+  }
+}
+
+private void drawAndSaveVizForAllDestinations() {
+  println("Creating viz for all destinations.");
+
+  int i=0;
+  for (Destination d : Destination.values()) {
+    background(255); // clear the previous
+    int offsetX = paddingX;
+    drawViz(d, offsetX);
+    save(String.format("p04-series%d-%s.tif", seriesLength, d).toLowerCase());
+    i++;
+  }
+}
+
+private void drawVizForAllDestinations() {
+  println("Creating viz for all destinations.");
+
+  int i=0;
+  for (Destination d : Destination.values()) {
+    if (i<numberOfRows) {
+      int offsetX = paddingX + i*(seriesLength*rowWidth + paddingX + marginRightY);
+      drawViz(d, offsetX);
+      i++;
+    }
+  }
+
+  //int offsetX = paddingX + i*(seriesLength*rowWidth + paddingX + marginRightY);
+  //drawViz(Destination.AMS, offsetX);
+  //i++;
+
+  //offsetX = paddingX + i*(seriesLength*rowWidth + paddingX + marginRightY);
+  //drawViz(Destination.BEG, offsetX);
+  //i++;
+
+  //offsetX = paddingX + i*(seriesLength*rowWidth + paddingX + marginRightY);
+  //drawViz(Destination.LHR, offsetX);
+  //i++;
+}
+
+private void drawViz(Destination destination, int offsetX) {
+  List<Price> ppd = pricesPerDestination.get(destination);
+  println(String.format("Creating viz for %s with %d prices.", destination, ppd.size()));
+  for (int i=0; i<ppd.size(); i++) {
+    int tX = paddingX+ offsetX;
+    int tY = paddingY + i*rowHeight;
+
+    Price p = ppd.get(i);
     drawPrices(tX, tY, p);
     drawLegend(tX+seriesLength*rowWidth+paddingX, tY, p);
   }
@@ -185,5 +231,31 @@ private List<Price> loadData() {
       result.add(currentPrice);
     }
   }
+  return result;
+}
+
+private Map<Destination, List<Price>> segmentData(List<Price> prices) {
+  maxNumOfFlights = 0;
+  Map<Destination, List<Price>> result = new HashMap<Destination, List<Price>>();
+
+  for (Destination d : Destination.values()) {
+    result.put(d, new ArrayList<Price>());
+  }
+
+  for (Price p : prices) {
+    Destination d = Destination.valueOf(p.destination);
+    List<Price> list = result.get(d);
+    list.add(p);
+  }
+
+  int total = 0;
+  for (Destination d : Destination.values()) {
+    int numOfFlights = result.get(d).size();
+    maxNumOfFlights = Math.max(maxNumOfFlights, numOfFlights);
+
+    println(String.format("%s has %d flights", d, numOfFlights));
+    total += numOfFlights;
+  }
+  println(String.format("Total flights is %d. maxNumOfFlights is %d", total, maxNumOfFlights));
   return result;
 }
