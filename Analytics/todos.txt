@@ -1,0 +1,9 @@
+TOODO
+
+ kw = ISOweek(as.IDate(departureDate-1))
+ 
+-->>  hier muss das -1 dynamisch werden, d.h wenn die Daten von Mi starten, dann mus ses -2 sein
+
+
+neue Daten laden, requestLength auf 21 lassen
+
