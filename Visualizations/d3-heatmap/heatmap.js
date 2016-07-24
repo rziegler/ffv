@@ -327,6 +327,7 @@ var ffvData;
 
 var deltaTimes;
 var departureDates;
+var carriers;
 
 //if (isOldBrowser() === false) {
 //	createMap();
@@ -386,6 +387,14 @@ d3.csv("data/data-mad.csv", function (d) {
 
     /* ************************** */
 
+    // carriers
+    carriers = d3.map(data,
+        function (d) {
+            return d.carrier;
+        }).keys();
+
+    /* ************************** */
+
     // x-axis data -> delta times
     deltaTimes = d3.map(data,
         function (d) {
@@ -421,15 +430,32 @@ d3.csv("data/data-mad.csv", function (d) {
 
     /* ************************** */
 
+    addCarrierButtons();
+
     // start the action
-    createPriceTiles();
-    reColorPriceTiles('AB', 'AB');
+    createTiles();
+    reColorTiles('AB', 'AB');
+
+
+    /* ************************** */
+
+    // Text States list event listener
+    $('input[name="state"]').change(function () {
+
+        var state = $(this).val(),
+            type = d3.select('input[name="type"]').property('value');
+
+        d3.selectAll('fieldset#state label').classed('sel', false);
+        d3.select('label[for="state_' + state + '"]').classed('sel', true);
+
+        reColorTiles(state, type);
+        //        updateIE8percents(state);
+    });
 
     /* ************************** */
 
     // tiles mouseover events
     $('#tiles td').hover(function () {
-
         $(this).addClass('sel');
 
         var tmp = $(this).attr('id').split('d').join('').split('h');
@@ -438,18 +464,15 @@ d3.csv("data/data-mad.csv", function (d) {
         var departureDate = parseInt(departureDateIndex);
         var deltaTime = parseInt(deltaTimeIndex);
 
-        var $sel = d3.select('#map path.state.sel');
-
+        var $sel = d3.select('#state label.sel span');
         if ($sel.empty()) {
-            var state = 'AB';
+            var state = carriers[0];
         } else {
-            var state = $sel.attr('id');
+            var state = $sel.attr('class');
         }
 
-        var view = 'AB';
-
         if (isOldBrowser() === false) {
-            drawHourlyChart2(state, departureDate);
+            drawHourlyChart(state, departureDate);
             selectHourlyChartBar(deltaTime);
         }
 
@@ -462,15 +485,15 @@ d3.csv("data/data-mad.csv", function (d) {
     }, function () {
         $(this).removeClass('sel');
 
-        var $sel = d3.select('#map path.state.sel');
+        var $sel = d3.select('#state label.sel span');
 
         if ($sel.empty()) {
-            var state = 'AB';
+            var state = carriers[0];
         } else {
-            var state = $sel.attr('id');
+            var state = $sel.attr('class');
         }
         if (isOldBrowser() === false) {
-            drawHourlyChart2(state, 0);
+            drawHourlyChart(state, 0);
         }
         var type = types[selectedType()];
         d3.select('#wtf .subtitle').html(type + ' traffic daily');
@@ -658,9 +681,18 @@ function addStateButtons() {
     }
 }
 
+function addCarrierButtons() {
+    for (var i = 0; i < carriers.length; i++) {
+        var abbr = carriers[i];
+        var html = '<input type="radio" id="state_' + abbr + '" name="state" value="' + abbr + '"/><label for="state_' + abbr + '"><span class="' + abbr + '">' + abbr + '</span></label>';
+
+        $('fieldset#state').append(html);
+    }
+}
+
 /* ************************** */
 
-function reColorPriceTiles(state, view) {
+function reColorTiles(state, view) {
     var side = d3.select('#tiles').attr('class');
 
     if (side === 'front') {
@@ -696,7 +728,7 @@ function reColorPriceTiles(state, view) {
     }
     flipTiles();
     if (isOldBrowser() === false) {
-        drawHourlyChart2(state, 0);
+        drawHourlyChart(state, 0);
     }
 }
 
@@ -742,7 +774,7 @@ function flipTiles() {
 
 /* ************************** */
 
-function drawHourlyChart2(state, row) {
+function drawHourlyChart(state, row) {
 
     d3.selectAll('#hourly_values svg').remove();
 
@@ -872,12 +904,9 @@ function updateIE8percents(state) {
     d3.select('#ie8_percents').html(html);
 }
 
-
-
-
 /* ************************** */
 
-function createPriceTiles() {
+function createTiles() {
 
     var html = '<table id="tiles" class="front">';
 

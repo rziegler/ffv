@@ -34,7 +34,8 @@
 
 fieldset#state label,
 fieldset#state input {
-    display: none;
+    /*    display: none;*/
+    display: inline !important;
 }
 
 fieldset#state.ff3 {
