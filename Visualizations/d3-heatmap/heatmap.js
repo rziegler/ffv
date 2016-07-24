@@ -332,11 +332,18 @@ var departureDates;
 //	createMap();
 //}
 //addStateButtons();
+var dateParser = d3.time.format("%Y-%m-%d");
 
-var descendingStrings = function (a, b) {
+var descendingIntStrings = function (a, b) {
     a = parseInt(a);
     b = parseInt(b);
     return b < a ? -1 : b > a ? 1 : b >= a ? 0 : NaN;
+};
+
+var ascendingDateStrings = function (a, b) {
+    a = dateParser.parse(a);
+    b = dateParser.parse(b);
+    return d3.ascending(a, b);
 };
 
 d3.select('#vis').classed(colorScheme, true);
@@ -362,10 +369,10 @@ d3.csv("data/data-mad.csv", function (d) {
         })
         .key(function (d) {
             return d.departureDate;
-        })
+        }).sortKeys(ascendingDateStrings)
         .key(function (d) {
             return d.deltaTime;
-        }).sortKeys(descendingStrings)
+        }).sortKeys(descendingIntStrings)
         .entries(data);
 
     // rearrange nested data so that the first level is an object and not an array
@@ -378,7 +385,12 @@ d3.csv("data/data-mad.csv", function (d) {
     deltaTimes = d3.map(data,
         function (d) {
             return d.deltaTime;
-        }).keys().sort(descendingStrings);
+        }).keys();
+    // map into array with ints instead of Strings (keys() of map returns Strings)
+    deltaTimes = $.map(deltaTimes, function (value, index) {
+        return [parseInt(value)];
+    });
+    deltaTimes.sort(d3.descending);
     console.log(deltaTimes);
 
 
@@ -393,9 +405,21 @@ d3.csv("data/data-mad.csv", function (d) {
 
     departureDates = d3.map(data,
         function (d) {
-            //            return d.departureDate;
-            return d.departureDate.split("-")[2] + "." + d.departureDate.split("-")[1];
+            return d.departureDate;
+            //            return d.departureDate.split("-")[2] + "." + d.departureDate.split("-")[1];
         }).keys();
+
+    // map into array with ints instead of Strings (keys() of map returns Strings)
+    departureDates = $.map(departureDates, function (value, index) {
+        return [{
+            date: dateParser.parse(value),
+            name: value,
+            abbr: value.split("-")[2] + "." + value.split("-")[1]
+        }];
+    });
+    departureDates.sort(function (a, b) {
+        return d3.ascending(a.date, b.date);
+    });
     console.log(departureDates);
 
 
@@ -588,98 +612,8 @@ function addStateButtons() {
 
 /* ************************** */
 
-function getCalcs(state, view) {
-
-    var min = 1,
-        max = -1;
-
-    // calculate min + max
-    for (var d = 0; d < data[state].views.length; d++) {
-        for (var h = 0; h < data[state].views[d].length; h++) {
-
-            if (view === 'all') {
-                var tot = data[state].views[d][h].pc + data[state].views[d][h].mob;
-            } else {
-                var tot = data[state].views[d][h][view];
-            }
-
-            if (tot > max) {
-                max = tot;
-            }
-
-            if (tot < min) {
-                min = tot;
-            }
-        }
-    }
-
-    return {
-        'min': min,
-        'max': max
-    };
-};
-
-/* ************************** */
-
-function reColorTiles(state, view) {
-
-    var calcs = getCalcs(state, view),
-        range = [];
-
-    for (var i = 1; i <= buckets; i++) {
-        range.push(i);
-    }
-
-    var bucket = d3.scale.quantize().domain([0, calcs.max > 0 ? calcs.max : 1]).range(range),
-        side = d3.select('#tiles').attr('class');
-
-
-    if (side === 'front') {
-        side = 'back';
-    } else {
-        side = 'front';
-    }
-
-    for (var d = 0; d < data[state].views.length; d++) {
-        for (var h = 0; h < data[state].views[d].length; h++) {
-
-            var sel = '#d' + d + 'h' + h + ' .tile .' + side,
-                val = data[state].views[d][h].pc + data[state].views[d][h].mob;
-
-            if (view !== 'all') {
-                val = data[state].views[d][h][view];
-            }
-
-            // erase all previous bucket designations on this cell
-            for (var i = 1; i <= buckets; i++) {
-                var cls = 'q' + i + '-' + buckets;
-                d3.select(sel).classed(cls, false);
-            }
-
-            // set new bucket designation for this cell
-            var cls = 'q' + (val > 0 ? bucket(val) : 0) + '-' + buckets;
-            d3.select(sel).classed(cls, true);
-        }
-    }
-    flipTiles();
-    if (isOldBrowser() === false) {
-        drawHourlyChart(state, 3);
-    }
-}
-
 function reColorPriceTiles(state, view) {
-
-    //    var calcs = getCalcs(state, view),
-    //        range = [];
-    //
-    //    for (var i = 1; i <= buckets; i++) {
-    //        range.push(i);
-    //    }
-    //
-    //    var bucket = d3.scale.quantize().domain([0, calcs.max > 0 ? calcs.max : 1]).range(range);
-
     var side = d3.select('#tiles').attr('class');
-
 
     if (side === 'front') {
         side = 'back';
@@ -930,8 +864,7 @@ function createPriceTiles() {
 
     for (var d = 0; d < departureDates.length; d++) {
         html += '<tr class="d' + d + '">';
-        //        html += '<th>' + departureDates[d].abbr + '</th>';
-        html += '<th>' + departureDates[d] + '</th>';
+        html += '<th>' + departureDates[d].abbr + '</th>';
         for (var h = 0; h < deltaTimes.length; h++) {
             html += '<td id="d' + d + 'h' + h + '" class="d' + d + ' h' + h + '"><div class="tile"><div class="face front"></div><div class="face back"></div></div></td>';
         }
