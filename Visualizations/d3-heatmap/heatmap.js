@@ -644,11 +644,12 @@ function reColorPriceTiles(state, view) {
             var cls = 'q' + (val > 0 ? bucket : 0) + '-' + buckets;
             d3.select(sel).classed(cls, true);
         }
+        console.log(ffvData[state].length + ">" + d);
     }
     flipTiles();
-    //    if (isOldBrowser() === false) {
-    //        drawHourlyChart(state, 3);
-    //    }
+    if (isOldBrowser() === false) {
+        drawHourlyChart2(state, 19);
+    }
 }
 
 /* ************************** */
@@ -751,6 +752,67 @@ function drawHourlyChart(state, day) {
         .text(String);
 }
 
+function drawHourlyChart2(state, row) {
+
+    d3.selectAll('#hourly_values svg').remove();
+
+    var w = 750,
+        h = 150;
+
+    var rowData = ffvData[state][row],
+        view = d3.select('#type label.sel span').attr('class');
+
+
+    var y = d3.scale.linear()
+        .domain([0, d3.max(rowData.values, function (d) {
+            //            return (view === 'all') ? d.pc + d.mob : d[view]
+            return d.values[0].price;
+        })])
+        .range([0, h]);
+
+    var chart = d3.select('#hourly_values .svg')
+        .append('svg:svg')
+        .attr('class', 'chart')
+        .attr('width', 300)
+        .attr('height', 170);
+
+    var rect = chart.selectAll('rect'),
+        text = chart.selectAll('text');
+
+    console.log(rowData);
+    rect.data(rowData.values)
+        .enter()
+        .append('svg:rect')
+        .attr('x', function (d, i) {
+            return i * 12;
+        })
+        .attr('y', function (d, i) {
+            return h - y(d.values[0].price);
+        })
+        .attr('height', function (d) {
+            return y(d.values[0].price);
+        })
+        .attr('width', 10)
+        .attr('class', function (d, i) {
+            return 'hr' + i;
+        });
+
+    text.data(rowData.values)
+        .enter()
+        .append('svg:text')
+        .attr('class', function (d, i) {
+            return (i % 7) ? 'hidden hr' + i : 'visible hr' + i
+        })
+        .attr("x", function (d, i) {
+            return i * 12
+        })
+        .attr("y", 166)
+        .attr("text-anchor", 'left')
+        .text(function (d, i) {
+            return d.values[0].deltaTime;
+        });
+}
+
 /* ************************** */
 
 function drawMobilePie(state) {
@@ -824,31 +886,6 @@ function updateIE8percents(state) {
 
 
 /* ************************** */
-
-function createTiles() {
-
-    var html = '<table id="tiles" class="front">';
-
-    html += '<tr><th><div>&nbsp;</div></th>';
-
-    for (var h = 0; h < hours.length; h++) {
-        html += '<th class="h' + h + '">' + hours[h] + '</th>';
-    }
-
-    html += '</tr>';
-
-    for (var d = 0; d < days.length; d++) {
-        html += '<tr class="d' + d + '">';
-        html += '<th>' + days[d].abbr + '</th>';
-        for (var h = 0; h < hours.length; h++) {
-            html += '<td id="d' + d + 'h' + h + '" class="d' + d + ' h' + h + '"><div class="tile"><div class="face front"></div><div class="face back"></div></div></td>';
-        }
-        html += '</tr>';
-    }
-
-    html += '</table>';
-    d3.select('#vis').html(html);
-}
 
 function createPriceTiles() {
 
