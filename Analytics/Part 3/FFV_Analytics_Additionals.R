@@ -102,10 +102,15 @@ data.destinations.condensed <- data.destinations %>%
     durationMax = max(durationMax)
   ) %>% select (destination, destinationName, avgFlightsPerDay, durationMin, durationMax)
 
+write.csv(data.destinations, "data-destinations.csv", row.names = FALSE)
+write.csv(data.destinations.condensed, "data-destinations-condensed.csv", row.names = FALSE)
+
+
+# -- data for LX316
 data.lx316 <- data.flights.completeSeriesOnly %>%
   ungroup() %>%
   arrange(flightNumber, departureDate, requestDate) %>%
-  group_by(flightNumber, departureDate, requestDate, deltaTime, origin, destination) %>%
+  group_by(flightNumber, departureDate, requestDate, deltaTime, origin, destination, carrier) %>%
   filter(
     flightNumber == "LX316"
   ) %>%
@@ -132,14 +137,14 @@ data.lx316 <- data.lx316 %>%
   # select(origin, destination, flightNumber, departureDate, requestDate, deltaTime, pmin, priceChangeRel, priceChangeAbs, pr, pcm, priceChangeRelBoolean, priceChangeAbsBoolean) %>%
   arrange(origin, destination, flightNumber, departureDate, requestDate)
 
-write.csv(data.destinations, "data-destinations.csv", row.names = FALSE)
-write.csv(data.destinations.condensed, "data-destinations-condensed.csv", row.names = FALSE)
 write.csv(data.lx316, "data-lx316.csv", row.names = FALSE)
 
+
+# -- data for ALL
 data.all <- data.flights.completeSeriesOnly %>%
   ungroup() %>%
   arrange(flightNumber, departureDate, requestDate) %>%
-  group_by(flightNumber, departureDate, requestDate, deltaTime, origin, destination) %>%
+  group_by(flightNumber, departureDate, requestDate, deltaTime, origin, destination, carrier) %>%
   summarise(
     pmin = min(pmin)
   )
@@ -163,6 +168,41 @@ data.all <- data.all %>%
 
 write.csv(data.all, "data-all.csv", row.names = FALSE)
 
+# -- data for MAD
+data.mad <- data.flights.completeSeriesOnly %>%
+  ungroup() %>%
+  arrange(flightNumber, departureDate, requestDate) %>%
+  group_by(flightNumber, departureDate, requestDate, deltaTime, origin, destination, carrier) %>%
+  filter(
+    destination == "MAD"
+  ) %>%
+  summarise(
+    pmin = min(pmin)
+  )
+
+data.mad <- data.mad %>%
+  ungroup() %>%
+  group_by(flightNumber, departureDate) %>%
+  mutate(
+    priceChangeRel = pmin/lag(pmin, default = first(pmin)),
+    priceChangeAbs = pmin/first(pmin),
+    pr = dense_rank(pmin),
+    bin = cut(pmin, 7),
+    binRanked = cut(pmin, 7, labels=c(1,2,3,4,5,6,7)),
+    priceChangeRelBoolean = ifelse((pmin == lag(pmin, default = first(pmin))), 0, ifelse(pmin > lag(pmin, default = first(pmin)), 1, -1)),
+    priceChangeAbsBoolean = ifelse((pmin == first(pmin)), 0, ifelse(pmin > first(pmin), 1, -1))
+  )
+
+data.mad <- data.mad %>%
+  ungroup() %>%
+  group_by(origin, destination, flightNumber, departureDate, requestDate) %>%
+  # select(origin, destination, flightNumber, departureDate, requestDate, deltaTime, pmin, priceChangeRel, priceChangeAbs, pr, pcm, priceChangeRelBoolean, priceChangeAbsBoolean) %>%
+  arrange(origin, destination, flightNumber, departureDate, requestDate)
+
+write.csv(data.mad, "data-mad.csv", row.names = FALSE)
+
+
+# -- plots for LX316
 
 ggplot(data = data.lx316, 
        aes(x = requestDate, 
