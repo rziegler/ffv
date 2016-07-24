@@ -28,3 +28,10 @@ Aufwände in Stunden
 23.06.  8h		dito
 26.06.	4h		Processing Viz
 27.06.	
+
+... ?
+
+18.07.	3h		Processing Viz Sketches
+21.07.	3h		Processing Viz Sketches
+22.07.	8h		Processing Viz Sketches
+23.07.	4h		D3
