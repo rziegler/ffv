@@ -363,6 +363,9 @@ d3.csv("data/data-mad.csv", function (d) {
 }, function (error, data) {
     if (error) throw error;
 
+    /* ************************** */
+
+    // FFV data (rearrange nested data so that the first level is an object and not an array)
     var nestedData = d3.nest()
         .key(function (d) {
             return d.carrier;
@@ -375,13 +378,15 @@ d3.csv("data/data-mad.csv", function (d) {
         }).sortKeys(descendingIntStrings)
         .entries(data);
 
-    // rearrange nested data so that the first level is an object and not an array
     ffvData = new Object();
     nestedData.forEach(function (v) {
         ffvData[v.key] = v.values;
     });
     console.log(ffvData);
 
+    /* ************************** */
+
+    // x-axis data -> delta times
     deltaTimes = d3.map(data,
         function (d) {
             return d.deltaTime;
@@ -393,20 +398,12 @@ d3.csv("data/data-mad.csv", function (d) {
     deltaTimes.sort(d3.descending);
     console.log(deltaTimes);
 
+    /* ************************** */
 
-    //    var tmpDepartureDates = data.map(
-    //        function (d) {
-    //            return {
-    //                name: d.departureDate,
-    //                abbr: d.departureDate.split("-")[2] + "." + d.departureDate.split("-")[1]
-    //            };
-    //        });
-    //    console.log(tmpDepartureDates);
-
+    // y-axis data -> departure dates
     departureDates = d3.map(data,
         function (d) {
             return d.departureDate;
-            //            return d.departureDate.split("-")[2] + "." + d.departureDate.split("-")[1];
         }).keys();
 
     // map into array with ints instead of Strings (keys() of map returns Strings)
@@ -422,14 +419,11 @@ d3.csv("data/data-mad.csv", function (d) {
     });
     console.log(departureDates);
 
+    /* ************************** */
 
-
+    // start the action
     createPriceTiles();
-    //    createTiles();
     reColorPriceTiles('AB', 'AB');
-
-
-
 
     /* ************************** */
 
