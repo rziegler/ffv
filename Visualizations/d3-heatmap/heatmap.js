@@ -427,6 +427,60 @@ d3.csv("data/data-mad.csv", function (d) {
     createPriceTiles();
     //    createTiles();
     reColorPriceTiles('AB', 'AB');
+
+
+
+
+    /* ************************** */
+
+    // tiles mouseover events
+    $('#tiles td').hover(function () {
+
+        $(this).addClass('sel');
+
+        var tmp = $(this).attr('id').split('d').join('').split('h');
+        var departureDateIndex = tmp[0];
+        var deltaTimeIndex = tmp[1];
+        var departureDate = parseInt(departureDateIndex);
+        var deltaTime = parseInt(deltaTimeIndex);
+
+        var $sel = d3.select('#map path.state.sel');
+
+        if ($sel.empty()) {
+            var state = 'AB';
+        } else {
+            var state = $sel.attr('id');
+        }
+
+        var view = 'AB';
+
+        if (isOldBrowser() === false) {
+            drawHourlyChart2(state, departureDate);
+            selectHourlyChartBar(deltaTime);
+        }
+
+        var type = types[selectedType()];
+        var selFlightNumber = ffvData[state][departureDateIndex].values[deltaTimeIndex].values[0].flightNumber;
+        var selDepartureDate = departureDates[departureDate].name;
+
+        d3.select('#wtf .subtitle').html(' Price development for ' + selFlightNumber + ' on ' + selDepartureDate);
+
+    }, function () {
+        $(this).removeClass('sel');
+
+        var $sel = d3.select('#map path.state.sel');
+
+        if ($sel.empty()) {
+            var state = 'AB';
+        } else {
+            var state = $sel.attr('id');
+        }
+        if (isOldBrowser() === false) {
+            drawHourlyChart2(state, 0);
+        }
+        var type = types[selectedType()];
+        d3.select('#wtf .subtitle').html(type + ' traffic daily');
+    });
 });
 
 //d3.json('tru247.json', function (json) {
@@ -648,7 +702,7 @@ function reColorPriceTiles(state, view) {
     }
     flipTiles();
     if (isOldBrowser() === false) {
-        drawHourlyChart2(state, 19);
+        drawHourlyChart2(state, 0);
     }
 }
 
@@ -694,64 +748,6 @@ function flipTiles() {
 
 /* ************************** */
 
-function drawHourlyChart(state, day) {
-
-    d3.selectAll('#hourly_values svg').remove();
-
-    var w = 300,
-        h = 150;
-
-    var weeklyData = data[state].views[day],
-        view = d3.select('#type label.sel span').attr('class');
-
-
-    var y = d3.scale.linear()
-        .domain([0, d3.max(weeklyData, function (d) {
-            return (view === 'all') ? d.pc + d.mob : d[view]
-        })])
-        .range([0, h]);
-
-
-    var chart = d3.select('#hourly_values .svg')
-        .append('svg:svg')
-        .attr('class', 'chart')
-        .attr('width', 300)
-        .attr('height', 170);
-
-    var rect = chart.selectAll('rect'),
-        text = chart.selectAll('text');
-
-    rect.data(weeklyData)
-        .enter()
-        .append('svg:rect')
-        .attr('x', function (d, i) {
-            return i * 12;
-        })
-        .attr('y', function (d) {
-            return (view === 'all') ? h - y(d.pc + d.mob) : h - y(d[view])
-        })
-        .attr('height', function (d) {
-            return (view === 'all') ? y(d.pc + d.mob) : y(d[view])
-        })
-        .attr('width', 10)
-        .attr('class', function (d, i) {
-            return 'hr' + i
-        });
-
-    text.data(hours)
-        .enter()
-        .append('svg:text')
-        .attr('class', function (d, i) {
-            return (i % 3) ? 'hidden hr' + i : 'visible hr' + i
-        })
-        .attr("x", function (d, i) {
-            return i * 12
-        })
-        .attr("y", 166)
-        .attr("text-anchor", 'left')
-        .text(String);
-}
-
 function drawHourlyChart2(state, row) {
 
     d3.selectAll('#hourly_values svg').remove();
@@ -779,7 +775,7 @@ function drawHourlyChart2(state, row) {
     var rect = chart.selectAll('rect'),
         text = chart.selectAll('text');
 
-    console.log(rowData);
+    //    console.log(rowData);
     rect.data(rowData.values)
         .enter()
         .append('svg:rect')
