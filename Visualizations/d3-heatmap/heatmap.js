@@ -365,7 +365,7 @@ var ascendingTimeStrings = function (a, b) {
 
 d3.select('#vis').classed(colorScheme, true);
 
-d3.csv("data/data-mad.csv", function (d) {
+d3.csv("data/data-mad-small.csv", function (d) {
     return {
         destination: d.destination,
         origin: d.origin,
@@ -473,11 +473,11 @@ d3.csv("data/data-mad.csv", function (d) {
 
     /* ************************** */
 
-    //    addCarrierButtons();
+    addCarrierButtons();
 
     // start the action
     createTiles();
-    reColorTiles('AB', 'AB');
+    reColorTiles('UX', 'AB');
 
 
     /* ************************** */
@@ -744,13 +744,12 @@ function reColorTiles(state, view) {
         side = 'front';
     }
 
-
     var departureDates = departureDatesWithMaxDepartureTimes.keys().sort(ascendingDateStrings);
 
     // loop over all departure dates
-    var tileRows = d3.selectAll("#tiles tr");
 
     var departureDateCounter = 0;
+    var flightCounter = 0;
 
     for (d in departureDates) {
         var departureDate = departureDates[d];
@@ -759,9 +758,7 @@ function reColorTiles(state, view) {
         // loop over all possible flights on a departure date
         for (var t = 0; t < obj.maxFlightsOnDate; t++) {
             // check if row is correct (same departure date/time) 
-            var next = ffvData[state][departureDateCounter];
-            //            console.log(next);
-            //            console.log(next.key.split(" ")[0]);
+            var next = ffvData[state][flightCounter];
 
             if (undefined != next && next.key.split(" ")[0] === obj.name) {
                 console.log(next.key + '<>' + obj.name + '-> true');
@@ -792,29 +789,28 @@ function reColorTiles(state, view) {
                     d3.select(sel).classed(cls, true);
                 }
 
-
-                departureDateCounter++;
+                flightCounter++;
             } else {
                 if (undefined != next) {
                     console.log(next.key + '<>' + obj.name + '-> false');
 
-                    // hide the row
-                    var selRow = ".d" + d + ".t" + t;
-                    if (!d3.select(selRow).classed("hidden")) {
-                        d3.select(selRow).classed("hidden", true);
-                    }
-
-                    for (var h = 0; h < next.values.length; h++) { // delta time
-                        var sel = '#d' + departureDateCounter + 't' + t + 'h' + h + ' .tile .' + side;
-
-                        // erase all previous bucket designations on this cell
-                        for (var i = 1; i <= buckets; i++) {
-                            var cls = 'q' + i + '-' + buckets;
-                            d3.select(sel).classed(cls, false);
-                        }
-                    }
+                    //                    for (var h = 0; h < next.values.length; h++) { // delta time
+                    //                        var sel = '#d' + departureDateCounter + 't' + t + 'h' + h + ' .tile .' + side;
+                    //
+                    //                        // erase all previous bucket designations on this cell
+                    //                        for (var i = 1; i <= buckets; i++) {
+                    //                            var cls = 'q' + i + '-' + buckets;
+                    //                            d3.select(sel).classed(cls, false);
+                    //                        }
+                    //                    }
                 } else {
                     console.log(departureDateCounter);
+
+                }
+                // hide the row
+                var selRow = ".d" + d + ".t" + t;
+                if (!d3.select(selRow).classed("hidden")) {
+                    d3.select(selRow).classed("hidden", true);
                 }
 
 
@@ -823,6 +819,7 @@ function reColorTiles(state, view) {
             }
 
         }
+        departureDateCounter++;
     }
 
 
