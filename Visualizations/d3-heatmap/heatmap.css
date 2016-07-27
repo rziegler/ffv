@@ -88,6 +88,10 @@ fieldset#type {
     color: #ccc;
 }
 
+#tiles tr.hidden {
+    display: none;
+}
+
 th.h7,
 th.h8,
 th.h9,

@@ -337,6 +337,7 @@ var carriers;
 //addStateButtons();
 var dateParser = d3.time.format("%Y-%m-%d");
 var timeParser = d3.time.format("%H:%M:%S");
+var dateTimeParser = d3.time.format("%Y-%m-%d %H:%M:%S");
 
 var descendingIntStrings = function (a, b) {
     a = parseInt(a);
@@ -347,6 +348,12 @@ var descendingIntStrings = function (a, b) {
 var ascendingDateStrings = function (a, b) {
     a = dateParser.parse(a);
     b = dateParser.parse(b);
+    return d3.ascending(a, b);
+};
+
+var ascendingDateTimeStrings = function (a, b) {
+    a = dateTimeParser.parse(a);
+    b = dateTimeParser.parse(b);
     return d3.ascending(a, b);
 };
 
@@ -382,8 +389,8 @@ d3.csv("data/data-mad.csv", function (d) {
             return d.carrier;
         })
         .key(function (d) {
-            return d.departureDate;
-        }).sortKeys(ascendingDateStrings)
+            return d.departureDate + " " + d.departureTime;
+        }).sortKeys(ascendingDateTimeStrings)
         .key(function (d) {
             return d.deltaTime;
         }).sortKeys(descendingIntStrings)
@@ -470,7 +477,7 @@ d3.csv("data/data-mad.csv", function (d) {
 
     // start the action
     createTiles();
-    //    reColorTiles('AB', 'AB');
+    reColorTiles('AB', 'AB');
 
 
     /* ************************** */
@@ -737,31 +744,153 @@ function reColorTiles(state, view) {
         side = 'front';
     }
 
-    //    console.log(ffvData[state].length);
-    for (var d = 0; d < ffvData[state].length; d++) {
-        for (var h = 0; h < ffvData[state][d].values.length; h++) {
-            var sel = '#d' + d + 'h' + h + ' .tile .' + side;
-            // TODO: hier gibt es mehr als 1 flug pro tag!!!
-            //            console.log(ffvData[state][d].values[h]);
-            var val = ffvData[state][d].values[h].values[0].price;
-            var bucket = ffvData[state][d].values[h].values[0].bin;
 
-            if (view !== 'all') {
-                val = ffvData[state][d].values[h].values[0].price;
+    var departureDates = departureDatesWithMaxDepartureTimes.keys().sort(ascendingDateStrings);
+
+    // loop over all departure dates
+    var tileRows = d3.selectAll("#tiles tr");
+
+    var departureDateCounter = 0;
+
+    for (d in departureDates) {
+        var departureDate = departureDates[d];
+        var obj = departureDatesWithMaxDepartureTimes.get(departureDate);
+
+        // loop over all possible flights on a departure date
+        for (var t = 0; t < obj.maxFlightsOnDate; t++) {
+            // check if row is correct (same departure date/time) 
+            var next = ffvData[state][departureDateCounter];
+            //            console.log(next);
+            //            console.log(next.key.split(" ")[0]);
+
+            if (undefined != next && next.key.split(" ")[0] === obj.name) {
+                console.log(next.key + '<>' + obj.name + '-> true');
+
+                var selRow = ".d" + d + ".t" + t;
+                if (d3.select(selRow).classed("hidden")) {
+                    d3.select(selRow).classed("hidden", false);
+                }
+
+                // color all the tiles of the row
+                for (var h = 0; h < next.values.length; h++) { // delta time
+                    var sel = '#d' + departureDateCounter + 't' + t + 'h' + h + ' .tile .' + side;
+                    var val = next.values[h].values[0].price;
+                    var bucket = next.values[h].values[0].bin;
+
+                    if (view !== 'all') {
+                        val = next.values[h].values[0].price;
+                    }
+
+                    // erase all previous bucket designations on this cell
+                    for (var i = 1; i <= buckets; i++) {
+                        var cls = 'q' + i + '-' + buckets;
+                        d3.select(sel).classed(cls, false);
+                    }
+
+                    // set new bucket designation for this cell
+                    var cls = 'q' + (val > 0 ? bucket : 0) + '-' + buckets;
+                    d3.select(sel).classed(cls, true);
+                }
+
+
+                departureDateCounter++;
+            } else {
+                if (undefined != next) {
+                    console.log(next.key + '<>' + obj.name + '-> false');
+
+                    // hide the row
+                    var selRow = ".d" + d + ".t" + t;
+                    if (!d3.select(selRow).classed("hidden")) {
+                        d3.select(selRow).classed("hidden", true);
+                    }
+
+                    for (var h = 0; h < next.values.length; h++) { // delta time
+                        var sel = '#d' + departureDateCounter + 't' + t + 'h' + h + ' .tile .' + side;
+
+                        // erase all previous bucket designations on this cell
+                        for (var i = 1; i <= buckets; i++) {
+                            var cls = 'q' + i + '-' + buckets;
+                            d3.select(sel).classed(cls, false);
+                        }
+                    }
+                } else {
+                    console.log(departureDateCounter);
+                }
+
+
+
+                break;
             }
 
-            // erase all previous bucket designations on this cell
-            for (var i = 1; i <= buckets; i++) {
-                var cls = 'q' + i + '-' + buckets;
-                d3.select(sel).classed(cls, false);
-            }
-
-            // set new bucket designation for this cell
-            var cls = 'q' + (val > 0 ? bucket : 0) + '-' + buckets;
-            d3.select(sel).classed(cls, true);
         }
-        console.log(ffvData[state].length + ">" + d);
     }
+
+
+
+    //    var tileRows = d3.selectAll("#tiles tr");
+    //
+    //
+    //
+    //    for (var d = 0; d < tileRows[0].length; d++) { // start with 1 -> skip header row
+    //
+    //        // check if row is correct (same departure date/time) 
+    //        var next = ffvData[state][departureDateCounter];
+    //
+    //
+    //
+    //        //        var nextValue = next.key;
+    //        //        var splitted = nextValue.split(" ");
+    //        //        var dateStr = splitted[0];
+    //        //        var timeStr = splitted[1];
+    //        //        var nextValueAbbr = dateStr.split("-")[2] + "." + dateStr.split("-")[1] + " " + timeStr.split(":")[0] + ":" + timeStr.split(":")[1];
+    //        //
+    //        //        console.log(nextValueAbbr);
+    //        //        var currentRow = tileRows[0][d];
+    //        //        console.log(next.key);
+    //        //        console.log(currentRow);
+    //        //        var tileHeader = d3.select(currentRow).select("th").property('innerText');
+    //        //
+    //        //        console.log(tileHeader);
+    //
+    //
+    //
+    //
+    //
+    //        if (nextValueAbbr === tileHeader) {
+    //            console.log('true');
+    //        } else {
+    //            console.log('false');
+    //        }
+    //
+    //    }
+
+
+    //    console.log(ffvData[state].length);
+    //    for (var d = 0; d < ffvData[state].length; d++) {
+    //        for (var h = 0; h < ffvData[state][d].values.length; h++) {
+    //            var sel = '#d' + d + 'h' + h + ' .tile .' + side;
+    //            // TODO: hier gibt es mehr als 1 flug pro tag!!!
+    //            //            console.log(ffvData[state][d].values[h]);
+    //            var val = ffvData[state][d].values[h].values[0].price;
+    //            var bucket = ffvData[state][d].values[h].values[0].bin;
+    //
+    //            if (view !== 'all') {
+    //                val = ffvData[state][d].values[h].values[0].price;
+    //            }
+    //
+    //            // erase all previous bucket designations on this cell
+    //            for (var i = 1; i <= buckets; i++) {
+    //                var cls = 'q' + i + '-' + buckets;
+    //                d3.select(sel).classed(cls, false);
+    //            }
+    //
+    //            // set new bucket designation for this cell
+    //            var cls = 'q' + (val > 0 ? bucket : 0) + '-' + buckets;
+    //            d3.select(sel).classed(cls, true);
+    //        }
+    //        console.log(ffvData[state].length + ">" + d);
+    //    }
+
     flipTiles();
     if (isOldBrowser() === false) {
         drawHourlyChart(state, 0);
@@ -781,9 +910,9 @@ function flipTiles() {
         newSide = 'front';
     }
 
-    var flipper = function (h, d, side) {
+    var flipper = function (h, t, d, side) {
         return function () {
-            var sel = '#d' + d + 'h' + h + ' .tile',
+            var sel = '#d' + d + 't' + t + 'h' + h + ' .tile',
                 rotateY = 'rotateY(180deg)';
 
             if (side === 'back') {
@@ -799,10 +928,18 @@ function flipTiles() {
         };
     };
 
+    var departureDates = departureDatesWithMaxDepartureTimes.keys().sort(ascendingDateStrings);
+
     for (var h = 0; h < deltaTimes.length; h++) {
-        for (var d = 0; d < departureDates.length; d++) {
-            var side = d3.select('#tiles').attr('class');
-            setTimeout(flipper(h, d, side), (h * 20) + (d * 20) + (Math.random() * 100));
+
+        for (d in departureDates) {
+            var departureDate = departureDates[d];
+            var obj = departureDatesWithMaxDepartureTimes.get(departureDate);
+
+            for (var t = 0; t < obj.maxFlightsOnDate; t++) {
+                var side = d3.select('#tiles').attr('class');
+                setTimeout(flipper(h, t, d, side), (h * 20) + (d * 20) + (Math.random() * 100));
+            }
         }
     }
     d3.select('#tiles').attr('class', newSide);
@@ -948,24 +1085,27 @@ function createTiles() {
 
     html += '<tr><th><div>&nbsp;</div></th>';
 
+    // header row (with delta times)
     for (var h = 0; h < deltaTimes.length; h++) {
         html += '<th class="h' + h + '">' + deltaTimes[h] + '</th>';
     }
-
     html += '</tr>';
 
     var departureDates = departureDatesWithMaxDepartureTimes.keys().sort(ascendingDateStrings);
 
+    // loop over all departure dates
     for (d in departureDates) {
         var departureDate = departureDates[d];
         var obj = departureDatesWithMaxDepartureTimes.get(departureDate);
-        //        console.log(departureDates[d]);
-        //        console.log(obj);
-        for (var i = 0; i < obj.maxFlightsOnDate; i++) {
-            html += '<tr class="d' + d + '">';
+
+        // create a row for each possible flight on a departure date
+        for (var t = 0; t < obj.maxFlightsOnDate; t++) {
+            html += '<tr class="d' + d + ' t' + t + '">';
             html += '<th>' + obj.abbr + '</th>';
+
+            // create a tile for each delta day
             for (var h = 0; h < deltaTimes.length; h++) {
-                html += '<td id="d' + d + 'h' + h + '" class="d' + d + ' h' + h + '"><div class="tile"><div class="face front"></div><div class="face back"></div></div></td>';
+                html += '<td id="d' + d + 't' + t + 'h' + h + '" class="d' + d + ' h' + h + '"><div class="tile"><div class="face front"></div><div class="face back"></div></div></td>';
             }
             html += '</tr>';
         }
