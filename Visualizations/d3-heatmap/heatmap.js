@@ -443,34 +443,12 @@ d3.csv("data/data-mad.csv", function (d) {
         .key(function (d) {
             return d.departureDate;
         }).sortKeys(ascendingDateStrings)
-        .key(function (d) {
-            return d.carrier;
-        })
-        .rollup(function (leaves) {
-            var value = leaves[0].departureDate;
-            return {
-                date: dateParser.parse(value),
-                name: value,
-                abbr: value.split("-")[2] + "." + value.split("-")[1],
-                carrier: leaves[0].carrier,
-                maxFlightsOnDay: leaves.length / deltaTimes.length
-            };
-        })
-        .entries(data);
-    console.log(departureDatesWithMaxDepartureTimes);
-
-    var test = d3.nest()
-        .key(function (d) {
-            return d.departureDate;
-        }).sortKeys(ascendingDateStrings)
-        //        .key(function (d) {
-        //            return d.carrier;
-        //        })
         .rollup(function (leaves) {
 
+            // calc number of flights on departure date per carrier
             var perCarrier = d3.nest()
-                .key(function (x) {
-                    return x.carrier;
+                .key(function (d) {
+                    return d.carrier;
                 }).rollup(function (l) {
                     return l.length / deltaTimes.length;
                 }).map(leaves, d3.map);
@@ -480,18 +458,18 @@ d3.csv("data/data-mad.csv", function (d) {
                 date: dateParser.parse(value),
                 name: value,
                 abbr: value.split("-")[2] + "." + value.split("-")[1],
-                maxFlightsOnDate: d3.max(perCarrier.values())
+                maxFlightsOnDate: d3.max(perCarrier.values()) // keep the maximum number of flighs on date
             };
         })
         .map(data, d3.map);
-    console.log(test);
+    console.log(departureDatesWithMaxDepartureTimes);
 
     /* ************************** */
 
     //    addCarrierButtons();
 
     // start the action
-    //    createTiles();
+    createTiles();
     //    reColorTiles('AB', 'AB');
 
 
@@ -976,13 +954,21 @@ function createTiles() {
 
     html += '</tr>';
 
-    for (var d = 0; d < departureDates.length; d++) {
-        html += '<tr class="d' + d + '">';
-        html += '<th>' + departureDates[d].abbr + '</th>';
-        for (var h = 0; h < deltaTimes.length; h++) {
-            html += '<td id="d' + d + 'h' + h + '" class="d' + d + ' h' + h + '"><div class="tile"><div class="face front"></div><div class="face back"></div></div></td>';
+    var departureDates = departureDatesWithMaxDepartureTimes.keys().sort(ascendingDateStrings);
+
+    for (d in departureDates) {
+        var departureDate = departureDates[d];
+        var obj = departureDatesWithMaxDepartureTimes.get(departureDate);
+        //        console.log(departureDates[d]);
+        //        console.log(obj);
+        for (var i = 0; i < obj.maxFlightsOnDate; i++) {
+            html += '<tr class="d' + d + '">';
+            html += '<th>' + obj.abbr + '</th>';
+            for (var h = 0; h < deltaTimes.length; h++) {
+                html += '<td id="d' + d + 'h' + h + '" class="d' + d + ' h' + h + '"><div class="tile"><div class="face front"></div><div class="face back"></div></div></td>';
+            }
+            html += '</tr>';
         }
-        html += '</tr>';
     }
 
     html += '</table>';
