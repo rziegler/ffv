@@ -140,7 +140,12 @@ th.h48 {
 
 #tiles tr th:first-child {
     padding-left: 12px;
+}
+
+#tiles tr th:nth-child(2) {
+    padding-left: 4px;
     padding-right: 8px;
+    text-align: right;
 }
 
 #tiles td {
@@ -153,6 +158,10 @@ th.h48 {
     position: relative;
     -webkit-transform-style: preserve-3d;
     -webkit-transition: 0.7s;
+}
+
+.wd-hidden {
+    display: none;
 }
 
 .face {

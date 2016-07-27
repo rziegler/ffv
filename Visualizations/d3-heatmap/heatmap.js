@@ -14,7 +14,7 @@ var browser = BrowserDetect;
 if (isOldBrowser()) {
     $('#old_browser_msg').show();
     $('#wtf').hide();
-    $('fieldset#state').addClass('ff3');
+    $('fieldset#carrier').addClass('ff3');
     $('#ie8_percents').addClass('ff3');
     $('#share2').addClass('ff3');
     $('#poweredby.old_browsers').show();
@@ -22,6 +22,53 @@ if (isOldBrowser()) {
 
 var buckets = 7; // was 11
 var colorScheme = 'grn';
+
+var days = d3.map([
+    {
+        name: 'Monday',
+        abbr: 'Mo',
+        abbrGerman: 'Mo',
+        idx: 0
+    },
+    {
+        name: 'Tuesday',
+        abbr: 'Tu',
+        abbrGerman: 'Di',
+        idx: 1
+    },
+    {
+        name: 'Wednesday',
+        abbr: 'We',
+        abbrGerman: 'Mi',
+        idx: 2
+    },
+    {
+        name: 'Thursday',
+        abbr: 'Th',
+        abbrGerman: 'Do',
+        idx: 3
+    },
+    {
+        name: 'Friday',
+        abbr: 'Fr',
+        abbrGerman: 'Fr',
+        idx: 4
+    },
+    {
+        name: 'Saturday',
+        abbr: 'Sa',
+        abbrGerman: 'Sa',
+        idx: 5
+    },
+    {
+        name: 'Sunday',
+        abbr: 'Su',
+        abbrGerman: 'So',
+        idx: 6
+    }
+	], function (d) {
+    return d.abbrGerman;
+});
 
 var data;
 var ffvData;
@@ -61,7 +108,7 @@ var ascendingTimeStrings = function (a, b) {
 
 d3.select('#vis').classed(colorScheme, true);
 
-d3.csv("data/data-mad-small.csv", function (d) {
+d3.csv("data/data-mad.csv", function (d) {
     return {
         destination: d.destination,
         origin: d.origin,
@@ -69,6 +116,7 @@ d3.csv("data/data-mad-small.csv", function (d) {
         flightNumber: d.flightNumber,
         departureDate: d.departureDate,
         departureTime: d.departureTime,
+        departureWeekday: d.departureWeekday,
         requestDate: d.requestDate,
         deltaTime: +d.deltaTime,
         price: +d.pmin,
@@ -157,10 +205,12 @@ d3.csv("data/data-mad-small.csv", function (d) {
                 }).map(leaves, d3.map);
 
             var value = leaves[0].departureDate;
+            var wday = leaves[0].departureWeekday
             return {
                 date: dateParser.parse(value),
                 name: value,
                 abbr: value.split("-")[2] + "." + value.split("-")[1],
+                wday: wday,
                 maxFlightsOnDate: d3.max(perCarrier.values()) // keep the maximum number of flighs on date
             };
         })
@@ -177,7 +227,7 @@ d3.csv("data/data-mad-small.csv", function (d) {
 
     /* ************************** */
 
-    // Text States list event listener
+    // carrier list event listener
     $('input[name="carrier"]').change(function () {
         var carrier = $(this).val();
 
@@ -186,6 +236,32 @@ d3.csv("data/data-mad-small.csv", function (d) {
 
         reColorTiles(carrier);
         //        updateIE8percents(state);
+    });
+
+    /* ************************** */
+
+    // weekdays event listener
+    $('input[name="weekday"]').change(function () {
+        var weekday = $(this).val();
+
+        d3.selectAll('fieldset#weekday label').classed('sel', false);
+        d3.select('label[for="weekday_' + weekday + '"]').classed('sel', true);
+
+        //        console.log(weekday);
+        d3.selectAll('tr.wd-hidden').classed('wd-hidden', false);
+        if (weekday !== 'all') {
+            d3.selectAll('tr.wd-hidden').classed('wd-hidden', false);
+            var element = d3.select("tbody").selectAll('tr:not(.' + weekday + ')');
+            console.log(element);
+            element.each(function (d, i) {
+                var element = d3.select(this);
+                var cls = element.attr('class');
+
+                if (cls != null) {
+                    element.classed('wd-hidden', true);
+                }
+            });
+        }
     });
 
     /* ************************** */
@@ -206,19 +282,19 @@ d3.csv("data/data-mad-small.csv", function (d) {
             var dataIdxIndex = tmp[1];
             var dataIdx = parseInt(dataIdxIndex);
 
-            var $sel = d3.select('#state label.sel span');
+            var $sel = d3.select('#carrier label.sel span');
             if ($sel.empty()) {
-                var state = carriers[0];
+                var carrier = carriers[0];
             } else {
-                var state = $sel.attr('class');
+                var carrier = $sel.attr('class');
             }
 
             if (isOldBrowser() === false) {
-                drawHourlyChart(state, dataIdx);
+                drawHourlyChart(carrier, dataIdx);
                 selectHourlyChartBar(deltaTime);
             }
 
-            var selFlight = ffvData[state][dataIdx];
+            var selFlight = ffvData[carrier][dataIdx];
             var selFlightNumber = selFlight.values[deltaTimeIndex].values[0].flightNumber;
             var selDepartureDate = selFlight.values[deltaTimeIndex].values[0].departureDate;
             var selDepartureTime = selFlight.values[deltaTimeIndex].values[0].departureTime;
@@ -231,15 +307,15 @@ d3.csv("data/data-mad-small.csv", function (d) {
         function () {
             $(this).removeClass('sel');
 
-            var $sel = d3.select('#state label.sel span');
+            var $sel = d3.select('#carrier label.sel span');
 
             if ($sel.empty()) {
-                var state = carriers[0];
+                var carrier = carriers[0];
             } else {
-                var state = $sel.attr('class');
+                var carrier = $sel.attr('class');
             }
             if (isOldBrowser() === false) {
-                drawHourlyChart(state, 0);
+                drawHourlyChart(carrier, 0);
             }
             d3.select('#wtf .subtitle').html('Daily price development');
             d3.select('#wtf .price').html('&nbsp;');
@@ -478,10 +554,9 @@ function reColorTiles(carrier) {
                 flightCounter++;
             } else {
                 //                if (undefined != next) {
-                //                                        console.log(next.key + ' <> ' + obj.name + '-> false');
+                //                    console.log(next.key + ' <> ' + obj.name + '-> false');
                 //                } else {
                 //                    console.log(departureDateCounter);
-                //
                 //                }
                 // hide the row
                 var selRow = ".d" + d + ".t" + t;
@@ -699,7 +774,9 @@ function createTiles() {
 
     var html = '<table id="tiles" class="front">';
 
-    html += '<tr><th><div>&nbsp;</div></th>';
+    html += '<tr>';
+    html += '<th><div>&nbsp;</div></th>';
+    html += '<th><div>&nbsp;</div></th>';
 
     // header row (with delta times)
     for (var h = 0; h < deltaTimes.length; h++) {
@@ -716,7 +793,8 @@ function createTiles() {
 
         // create a row for each possible flight on a departure date
         for (var t = 0; t < obj.maxFlightsOnDate; t++) {
-            html += '<tr class="d' + d + ' t' + t + '">';
+            html += '<tr class="d' + d + ' t' + t + ' wd' + days.get(obj.wday).idx + '">';
+            html += '<th>' + days.get(obj.wday).abbr + '</th>';
             html += '<th>' + obj.abbr + '</th>';
 
             // create a tile for each delta day
