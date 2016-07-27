@@ -92,19 +92,34 @@ fieldset#type {
     display: none;
 }
 
-th.h7,
-th.h8,
-th.h9,
-th.h10,
-th.h11,
-th.h12,
-th.h13,
+th.h0,
+th.h1,
+th.h2,
+th.h3,
+th.h4,
+th.h5,
+th.h6,
 th.h14,
 th.h15,
 th.h16,
 th.h17,
 th.h18,
-th.h19 {
+th.h19,
+th.h20,
+th.h28,
+th.h29,
+th.h30,
+th.h31,
+th.h32,
+th.h33,
+th.h34,
+th.h42,
+th.h43,
+th.h44,
+th.h45,
+th.h46,
+th.h47,
+th.h48 {
     color: #444 !important;
 }
 
@@ -261,6 +276,7 @@ th.h19 {
 #wtf {
     float: left;
     width: 515px;
+    margin-left: 32px;
 }
 
 #poweredby {
@@ -474,6 +490,13 @@ h2 {
     margin-left: -50px;
     z-index: -1337;
     text-align: center;
+}
+
+p.price {
+    font-size: 13px;
+    line-height: 19px;
+    padding-top: 2px;
+    color: #999;
 }
 
 p.subtitle {

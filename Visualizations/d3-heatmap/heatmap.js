@@ -179,7 +179,6 @@ d3.csv("data/data-mad-small.csv", function (d) {
     createTiles();
     reColorTiles(carriers[0], 'AB');
 
-
     /* ************************** */
 
     // Text States list event listener
@@ -229,8 +228,10 @@ d3.csv("data/data-mad-small.csv", function (d) {
             var selDepartureDate = selFlight.values[deltaTimeIndex].values[0].departureDate;
             var selDepartureTime = selFlight.values[deltaTimeIndex].values[0].departureTime;
 
-            d3.select('#wtf .subtitle').html(' Price development for ' + selFlightNumber + ' on ' + selDepartureDate + ' at ' + selDepartureTime);
+            d3.select('#wtf .subtitle').html('Price development for ' + selFlightNumber + ' on ' + selDepartureDate + ' at ' + selDepartureTime);
 
+            var selPrice = selFlight.values[deltaTimeIndex].values[0].price;
+            d3.select('#wtf .price').html('CHF ' + selPrice);
         },
         function () {
             $(this).removeClass('sel');
@@ -246,6 +247,7 @@ d3.csv("data/data-mad-small.csv", function (d) {
                 drawHourlyChart(state, 0);
             }
             d3.select('#wtf .subtitle').html('Daily price development');
+            d3.select('#wtf .price').html('');
         });
 });
 
