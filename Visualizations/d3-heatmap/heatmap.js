@@ -365,7 +365,7 @@ var ascendingTimeStrings = function (a, b) {
 
 d3.select('#vis').classed(colorScheme, true);
 
-d3.csv("data/data-mad-small.csv", function (d) {
+d3.csv("data/data-mad.csv", function (d) {
     return {
         destination: d.destination,
         origin: d.origin,
@@ -775,7 +775,7 @@ function reColorTiles(state, view) {
             removeCurrentDataIndexClasses(selRowCells);
 
             if (undefined != next && next.key.split(" ")[0] === obj.name) {
-                console.log(next.key + '<>' + obj.name + '-> true');
+                //                console.log(next.key + ' <> ' + obj.name + '-> true');
 
                 if (d3.select(selRow).classed("hidden")) {
                     d3.select(selRow).classed("hidden", false);
@@ -809,7 +809,7 @@ function reColorTiles(state, view) {
                 flightCounter++;
             } else {
                 if (undefined != next) {
-                    console.log(next.key + '<>' + obj.name + '-> false');
+                    //                    console.log(next.key + ' <> ' + obj.name + '-> false');
 
                     //                    for (var h = 0; h < next.values.length; h++) { // delta time
                     //                        var sel = '#d' + departureDateCounter + 't' + t + 'h' + h + ' .tile .' + side;
@@ -829,10 +829,6 @@ function reColorTiles(state, view) {
                 if (!d3.select(selRow).classed("hidden")) {
                     d3.select(selRow).classed("hidden", true);
                 }
-
-
-
-                break;
             }
 
         }
