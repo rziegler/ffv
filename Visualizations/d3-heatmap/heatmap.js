@@ -365,7 +365,7 @@ var ascendingTimeStrings = function (a, b) {
 
 d3.select('#vis').classed(colorScheme, true);
 
-d3.csv("data/data-mad.csv", function (d) {
+d3.csv("data/data-mad-small.csv", function (d) {
     return {
         destination: d.destination,
         origin: d.origin,
@@ -477,7 +477,7 @@ d3.csv("data/data-mad.csv", function (d) {
 
     // start the action
     createTiles();
-    reColorTiles('UX', 'AB');
+    reColorTiles(carriers[0], 'AB');
 
 
     /* ************************** */
@@ -521,7 +521,7 @@ d3.csv("data/data-mad.csv", function (d) {
             }
 
             if (isOldBrowser() === false) {
-                drawHourlyChart(state, departureDate);
+                drawHourlyChart(state, dataIdx);
                 selectHourlyChartBar(deltaTime);
             }
 
@@ -810,16 +810,6 @@ function reColorTiles(state, view) {
             } else {
                 if (undefined != next) {
                     //                    console.log(next.key + ' <> ' + obj.name + '-> false');
-
-                    //                    for (var h = 0; h < next.values.length; h++) { // delta time
-                    //                        var sel = '#d' + departureDateCounter + 't' + t + 'h' + h + ' .tile .' + side;
-                    //
-                    //                        // erase all previous bucket designations on this cell
-                    //                        for (var i = 1; i <= buckets; i++) {
-                    //                            var cls = 'q' + i + '-' + buckets;
-                    //                            d3.select(sel).classed(cls, false);
-                    //                        }
-                    //                    }
                 } else {
                     console.log(departureDateCounter);
 
@@ -914,8 +904,8 @@ function drawHourlyChart(state, row) {
     var w = 750,
         h = 150;
 
-    var rowData = ffvData[state][row],
-        view = d3.select('#type label.sel span').attr('class');
+    var rowData = ffvData[state][row];
+    var view = d3.select('#type label.sel span').attr('class');
 
 
     var y = d3.scale.linear()
