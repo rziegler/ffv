@@ -53,60 +53,48 @@
                 <h1>Flight Fare Visualization</h1>
                 <p id="subtitle">Plan to fly to Madrid? Cheapest prices are generally on Tuesdays.</p>
             </div>
+
+            <div id="legend" class="grn">
+                <ul>
+                    <li class="q1-7"></li>
+                    <li class="q2-7"></li>
+                    <li class="q3-7"></li>
+                    <li class="q4-7"></li>
+                    <li class="q5-7"></li>
+                    <li class="q6-7"></li>
+                    <li class="q7-7"></li>
+                </ul>
+                <p class="more">higher price</p>
+                <p class="less">lower price</p>
+            </div>
         </div>
         <div id="old_browser_msg">We're sorry but your browser is really old and can't handle the full interactive experience. We recommend you upgrade to the latest version as soon as possible.</div>
-        <div id="legend" class="grn">
-            <ul>
-                <li class="q1-7"></li>
-                <li class="q2-7"></li>
-                <li class="q3-7"></li>
-                <li class="q4-7"></li>
-                <li class="q5-7"></li>
-                <li class="q6-7"></li>
-                <li class="q7-7"></li>
-            </ul>
-            <p class="more">higher price</p>
-            <p class="less">lower price</p>
-        </div>
 
-        <div id="vis"></div>
+
         <div id="states_nav">
-
             <div class="controls">
-                <fieldset id="type">
-                    <input type="radio" id="type_all" name="type" value="all" checked="checked" />
-                    <label for="type_all" class="sel"><span class="all">All Traffic</span></label>
-                    <input type="radio" id="type_pc" name="type" value="pc" />
-                    <label for="type_pc"><span class="pc">Computer</span></label>
-                    <input type="radio" id="type_mob" name="type" value="mob" />
-                    <label for="type_mob"><span class="mob">Mobile</span></label>
-                </fieldset>
                 <fieldset id="state">
-<!--
-                    <input type="radio" id="state_all" name="state" value="all" checked="checked" />
-<label id="state_all_label" for="state_all" class="sel"><span class="all">All States</span></label>
--->
+                    <!-- filled dynamically with carriers -->
                 </fieldset>
             </div>
             <div id="map"></div>
         </div>
-        <ul id="ie8_percents">
-            <li class="pc"><span>82%</span> Computer</li>
-            <li class="mob"><span>18%</span> Mobile</li>
-        </ul>
+        <div id="vis"></div>
 
         <div id="wtf">
             <h2>All States</h2>
+<!--
             <div id="pc2mob">
-                <div class="svg"></div>
-                <ul>
-                    <li class="pc"><span>82%</span> Computer</li>
-                    <li class="mob"><span>18%</span> Mobile</li>
-                </ul>
-            </div>
+    <div class="svg"></div>
+    <ul>
+        <li class="pc"><span>82%</span> Computer</li>
+        <li class="mob"><span>18%</span> Mobile</li>
+    </ul>
+</div>
+-->
             <div id="hourly_values">
                 <div class="svg"></div>
-                <p class="subtitle">All traffic daily</p>
+                <p class="subtitle">Daily price development</p>
             </div>
         </div>
         <div id="footer">Based on traffic on <a href="http://trulia.com">Trulia.com</a> and <a href="http://www.trulia.com/mobile/iphone/">Trulia Mobile</a> between June and August 2011. "Computer" traffic includes all house hunting activity coming from desktops and laptop computers while "Mobile" includes app and mobile web traffic from cell phones and tablets. Times are normalized for their respective timezones.</div>

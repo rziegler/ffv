@@ -23,306 +23,6 @@ if (isOldBrowser()) {
 var buckets = 7; // was 11
 var colorScheme = 'grn';
 
-var days = [
-        {
-            name: 'Monday',
-            abbr: 'Mo'
-        },
-        {
-            name: 'Tuesday',
-            abbr: 'Tu'
-        },
-        {
-            name: 'Wednesday',
-            abbr: 'We'
-        },
-        {
-            name: 'Thursday',
-            abbr: 'Th'
-        },
-        {
-            name: 'Friday',
-            abbr: 'Fr'
-        },
-        {
-            name: 'Saturday',
-            abbr: 'Sa'
-        },
-        {
-            name: 'Sunday',
-            abbr: 'Su'
-        }
-	],
-    types = {
-        all: 'All',
-        pc: 'Computer',
-        mob: 'Mobile'
-    },
-    hours = ['12a', '1a', '2a', '3a', '4a', '5a', '6a', '7a', '8a', '9a', '10a', '11a', '12p', '1p', '2p', '3p', '4p', '5p', '6p', '7p', '8p', '9p', '10p', '11p'],
-    stateAbbrs = ['all', 'AK', 'AL', 'AR', 'AZ', 'CA', 'CO', 'CT', 'DC', 'DE', 'FL', 'GA', 'HI', 'IA', 'ID', 'IL', 'IN', 'KS', 'KY', 'LA', 'MA', 'MD', 'ME', 'MI', 'MN', 'MO', 'MS', 'MT', 'NC', 'ND', 'NE', 'NH', 'NJ', 'NM', 'NV', 'NY', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VA', 'VT', 'WA', 'WI', 'WV', 'WY'],
-    states = {
-        all: {
-            name: 'All States',
-            abbr: 'all',
-            offset: 0
-        },
-        AK: {
-            name: 'Alaska',
-            abbr: 'AK',
-            offset: -1
-        },
-        AL: {
-            name: 'Alabama',
-            abbr: 'AL',
-            offset: 2
-        },
-        AR: {
-            name: 'Arkansas',
-            abbr: 'AR',
-            offset: 2
-        },
-        AZ: {
-            name: 'Arizona',
-            abbr: 'AZ',
-            offset: 0
-        },
-        CA: {
-            name: 'California',
-            abbr: 'CA',
-            offset: 0
-        },
-        CO: {
-            name: 'Colorado',
-            abbr: 'CO',
-            offset: 1
-        },
-        CT: {
-            name: 'Connecticut',
-            abbr: 'CT',
-            offset: 3
-        },
-        DC: {
-            name: 'Washington D.C.',
-            abbr: 'DC',
-            offset: 3
-        },
-        DE: {
-            name: 'Delaware',
-            abbr: 'DE',
-            offset: 3
-        },
-        FL: {
-            name: 'Florida',
-            abbr: 'FL',
-            offset: 3
-        },
-        GA: {
-            name: 'Georgia',
-            abbr: 'GA',
-            offset: 3
-        },
-        HI: {
-            name: 'Hawaii',
-            abbr: 'HI',
-            offset: -3
-        },
-        IA: {
-            name: 'Iowa',
-            abbr: 'IA',
-            offset: 2
-        },
-        ID: {
-            name: 'Idaho',
-            abbr: 'ID',
-            offset: 1
-        },
-        IL: {
-            name: 'Illinois',
-            abbr: 'IL',
-            offset: 2
-        },
-        IN: {
-            name: 'Indiana',
-            abbr: 'IN',
-            offset: 3
-        },
-        KS: {
-            name: 'Kansas',
-            abbr: 'KS',
-            offset: 2
-        },
-        KY: {
-            name: 'Kentucky',
-            abbr: 'KY',
-            offset: 3
-        },
-        LA: {
-            name: 'Louisiana',
-            abbr: 'LA',
-            offset: 2
-        },
-        MA: {
-            name: 'Massachusetts',
-            abbr: 'MA',
-            offset: 3
-        },
-        MD: {
-            name: 'Maryland',
-            abbr: 'MD',
-            offset: 3
-        },
-        ME: {
-            name: 'Maine',
-            abbr: 'ME',
-            offset: 3
-        },
-        MI: {
-            name: 'Michigan',
-            abbr: 'MI',
-            offset: 3
-        },
-        MN: {
-            name: 'Minnesota',
-            abbr: 'MN',
-            offset: 2
-        },
-        MO: {
-            name: 'Missouri',
-            abbr: 'MO',
-            offset: 2
-        },
-        MS: {
-            name: 'Missippippi',
-            abbr: 'MS',
-            offset: 2
-        },
-        MT: {
-            name: 'Montana',
-            abbr: 'MT',
-            offset: 1
-        },
-        NC: {
-            name: 'North Carolina',
-            abbr: 'NC',
-            offset: 3
-        },
-        ND: {
-            name: 'North Dakota',
-            abbr: 'ND',
-            offset: 2
-        },
-        NE: {
-            name: 'Nebraska',
-            abbr: 'NE',
-            offset: 2
-        },
-        NH: {
-            name: 'New Hampshire',
-            abbr: 'NH',
-            offset: 3
-        },
-        NJ: {
-            name: 'New Jersey',
-            abbr: 'NJ',
-            offset: 3
-        },
-        NM: {
-            name: 'New Mexico',
-            abbr: 'NM',
-            offset: 1
-        },
-        NV: {
-            name: 'Nevada',
-            abbr: 'NV',
-            offset: 0
-        },
-        NY: {
-            name: 'New York',
-            abbr: 'NY',
-            offset: 3
-        },
-        OH: {
-            name: 'Ohio',
-            abbr: 'OH',
-            offset: 3
-        },
-        OK: {
-            name: 'Oklahoma',
-            abbr: 'OK',
-            offset: 2
-        },
-        OR: {
-            name: 'Oregon',
-            abbr: 'OR',
-            offset: 0
-        },
-        PA: {
-            name: 'Pennsylvania',
-            abbr: 'PA',
-            offset: 3
-        },
-        RI: {
-            name: 'Rhode Island',
-            abbr: 'RI',
-            offset: 3
-        },
-        SC: {
-            name: 'South Carolina',
-            abbr: 'SC',
-            offset: 3
-        },
-        SD: {
-            name: 'South Dakota',
-            abbr: 'SD',
-            offset: 2
-        },
-        TN: {
-            name: 'Tennessee',
-            abbr: 'TN',
-            offset: 2
-        },
-        TX: {
-            name: 'Texas',
-            abbr: 'TX',
-            offset: 2
-        },
-        UT: {
-            name: 'Utah',
-            abbr: 'UT',
-            offset: 1
-        },
-        VA: {
-            name: 'Virginia',
-            abbr: 'VA',
-            offset: 3
-        },
-        VT: {
-            name: 'Vermont',
-            abbr: 'VT',
-            offset: 3
-        },
-        WA: {
-            name: 'Washington',
-            abbr: 'WA',
-            offset: 0
-        },
-        WI: {
-            name: 'Wisconsin',
-            abbr: 'WI',
-            offset: 2
-        },
-        WV: {
-            name: 'West Virginia',
-            abbr: 'WV',
-            offset: 3
-        },
-        WY: {
-            name: 'Wyoming',
-            abbr: 'WY',
-            offset: 1
-        }
-    };
-
 var data;
 var ffvData;
 
@@ -485,13 +185,12 @@ d3.csv("data/data-mad-small.csv", function (d) {
     // Text States list event listener
     $('input[name="state"]').change(function () {
 
-        var state = $(this).val(),
-            type = d3.select('input[name="type"]').property('value');
+        var state = $(this).val();
 
         d3.selectAll('fieldset#state label').classed('sel', false);
         d3.select('label[for="state_' + state + '"]').classed('sel', true);
 
-        reColorTiles(state, type);
+        reColorTiles(state);
         //        updateIE8percents(state);
     });
 
@@ -525,7 +224,6 @@ d3.csv("data/data-mad-small.csv", function (d) {
                 selectHourlyChartBar(deltaTime);
             }
 
-            var type = types[selectedType()];
             var selFlight = ffvData[state][dataIdx];
             var selFlightNumber = selFlight.values[deltaTimeIndex].values[0].flightNumber;
             var selDepartureDate = selFlight.values[deltaTimeIndex].values[0].departureDate;
@@ -547,8 +245,7 @@ d3.csv("data/data-mad-small.csv", function (d) {
             if (isOldBrowser() === false) {
                 drawHourlyChart(state, 0);
             }
-            var type = types[selectedType()];
-            d3.select('#wtf .subtitle').html(type + ' traffic daily');
+            d3.select('#wtf .subtitle').html('Daily price development');
         });
 });
 
@@ -712,26 +409,7 @@ function isOldBrowser() {
     return result;
 }
 
-
 /* ************************** */
-
-function selectedType() {
-
-    //return d3.select('input[name="type"]:checked').property('value'); // IE8 doesn't like this
-    return $('input[name="type"]:checked').val();
-}
-
-/* ************************** */
-
-function addStateButtons() {
-
-    for (var i = 1; i < stateAbbrs.length; i++) {
-        var abbr = stateAbbrs[i];
-        var html = '<input type="radio" id="state_' + abbr + '" name="state" value="' + abbr + '"/><label for="state_' + abbr + '"><span class="' + abbr + '">' + abbr + '</span></label>';
-
-        $('fieldset#state').append(html);
-    }
-}
 
 function addCarrierButtons() {
     for (var i = 0; i < carriers.length; i++) {
@@ -744,7 +422,7 @@ function addCarrierButtons() {
 
 /* ************************** */
 
-function reColorTiles(state, view) {
+function reColorTiles(state) {
     var side = d3.select('#tiles').attr('class');
 
     if (side === 'front') {
@@ -754,12 +432,10 @@ function reColorTiles(state, view) {
     }
 
     var departureDates = departureDatesWithMaxDepartureTimes.keys().sort(ascendingDateStrings);
-
-    // loop over all departure dates
-
     var departureDateCounter = 0;
     var flightCounter = 0;
 
+    // loop over all departure dates
     for (d in departureDates) {
         var departureDate = departureDates[d];
         var obj = departureDatesWithMaxDepartureTimes.get(departureDate);
@@ -791,10 +467,6 @@ function reColorTiles(state, view) {
                     var val = next.values[h].values[0].price;
                     var bucket = next.values[h].values[0].bin;
 
-                    if (view !== 'all') {
-                        val = next.values[h].values[0].price;
-                    }
-
                     // erase all previous bucket designations on this cell
                     for (var i = 1; i <= buckets; i++) {
                         var cls = 'q' + i + '-' + buckets;
@@ -808,12 +480,12 @@ function reColorTiles(state, view) {
 
                 flightCounter++;
             } else {
-                if (undefined != next) {
-                    //                    console.log(next.key + ' <> ' + obj.name + '-> false');
-                } else {
-                    console.log(departureDateCounter);
-
-                }
+                //                if (undefined != next) {
+                //                                        console.log(next.key + ' <> ' + obj.name + '-> false');
+                //                } else {
+                //                    console.log(departureDateCounter);
+                //
+                //                }
                 // hide the row
                 var selRow = ".d" + d + ".t" + t;
                 if (!d3.select(selRow).classed("hidden")) {
@@ -905,12 +577,10 @@ function drawHourlyChart(state, row) {
         h = 150;
 
     var rowData = ffvData[state][row];
-    var view = d3.select('#type label.sel span').attr('class');
 
 
     var y = d3.scale.linear()
         .domain([0, d3.max(rowData.values, function (d) {
-            //            return (view === 'all') ? d.pc + d.mob : d[view]
             return d.values[0].price;
         })])
         .range([0, h]);
@@ -960,51 +630,50 @@ function drawHourlyChart(state, row) {
 
 /* ************************** */
 
-function drawMobilePie(state) {
-
-    var w = 150,
-        h = 150,
-        r = Math.min(w, h) / 2,
-        pieData = [1, data[state].pc2mob],
-        pie = d3.layout.pie(),
-        arc = d3.svg.arc().innerRadius(0).outerRadius(r),
-        type = selectedType();
-
-    d3.select('#pc2mob').attr('class', type);
-    d3.selectAll('#pc2mob svg').remove();
-
-    var chart = d3.select("#pc2mob .svg").append('svg:svg')
-        .data([pieData])
-        .attr("width", w)
-        .attr("height", h);
-
-    var arcs = chart.selectAll('g')
-        .data(pie)
-        .enter().append('svg:g')
-        .attr("transform", "translate(" + r + "," + r + ")");
-
-    arcs.append('svg:path')
-        .attr('d', arc)
-        .attr('class', function (d, i) {
-            return i === 0 ? 'mob' : 'pc'
-        });
-
-    var rawMobPercent = 100 / (data[state].pc2mob + 1);
-
-    if (rawMobPercent < 1) {
-        var mobPercent = '< 1',
-            pcPercent = '> 99';
-    } else {
-        var mobPercent = Math.round(rawMobPercent),
-            pcPercent = 100 - mobPercent;
-    }
-
-    d3.select('#pc2mob .pc span').html(pcPercent + '%');
-    d3.select('#pc2mob .mob span').html(mobPercent + '%');
-
-    var html = d3.select('#pc2mob ul').html();
-    d3.select('#ie8_percents').html(html);
-}
+//function drawMobilePie(state) {
+//
+//    var w = 150,
+//        h = 150,
+//        r = Math.min(w, h) / 2,
+//        pieData = [1, data[state].pc2mob],
+//        pie = d3.layout.pie(),
+//        arc = d3.svg.arc().innerRadius(0).outerRadius(r),
+//
+//        d3.select('#pc2mob').attr('class', type);
+//    d3.selectAll('#pc2mob svg').remove();
+//
+//    var chart = d3.select("#pc2mob .svg").append('svg:svg')
+//        .data([pieData])
+//        .attr("width", w)
+//        .attr("height", h);
+//
+//    var arcs = chart.selectAll('g')
+//        .data(pie)
+//        .enter().append('svg:g')
+//        .attr("transform", "translate(" + r + "," + r + ")");
+//
+//    arcs.append('svg:path')
+//        .attr('d', arc)
+//        .attr('class', function (d, i) {
+//            return i === 0 ? 'mob' : 'pc'
+//        });
+//
+//    var rawMobPercent = 100 / (data[state].pc2mob + 1);
+//
+//    if (rawMobPercent < 1) {
+//        var mobPercent = '< 1',
+//            pcPercent = '> 99';
+//    } else {
+//        var mobPercent = Math.round(rawMobPercent),
+//            pcPercent = 100 - mobPercent;
+//    }
+//
+//    d3.select('#pc2mob .pc span').html(pcPercent + '%');
+//    d3.select('#pc2mob .mob span').html(mobPercent + '%');
+//
+//    var html = d3.select('#pc2mob ul').html();
+//    d3.select('#ie8_percents').html(html);
+//}
 
 /* ************************** */
 

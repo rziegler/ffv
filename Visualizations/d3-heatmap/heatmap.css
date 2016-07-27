@@ -204,7 +204,7 @@ th.h19 {
 }
 
 #legend {
-    clear: left;
+    /*    clear: left;*/
     margin-left: 24px;
     width: 125px;
     color: #777;
@@ -217,7 +217,7 @@ th.h19 {
     border-radius: 3px;
     font-size: 11px;
     line-height: 11px;
-    margin-bottom: 10px;
+    margin-bottom: 25px;
     margin-right: 24px;
 }
 
@@ -247,7 +247,9 @@ th.h19 {
 }
 
 #states_nav {
-    width: 400px;
+    clear: left;
+    width: 250px;
+    height: 40px;
     float: left;
     margin-left: 20px;
 }
