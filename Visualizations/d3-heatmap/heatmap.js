@@ -31,10 +31,6 @@ var departureDates;
 var departureDatesWithMaxDepartureTimes; // departure dates with max number of times per carrier
 var carriers;
 
-//if (isOldBrowser() === false) {
-//	createMap();
-//}
-//addStateButtons();
 var dateParser = d3.time.format("%Y-%m-%d");
 var timeParser = d3.time.format("%H:%M:%S");
 var dateTimeParser = d3.time.format("%Y-%m-%d %H:%M:%S");
@@ -182,14 +178,13 @@ d3.csv("data/data-mad-small.csv", function (d) {
     /* ************************** */
 
     // Text States list event listener
-    $('input[name="state"]').change(function () {
+    $('input[name="carrier"]').change(function () {
+        var carrier = $(this).val();
 
-        var state = $(this).val();
+        d3.selectAll('fieldset#carrier label').classed('sel', false);
+        d3.select('label[for="carrier_' + carrier + '"]').classed('sel', true);
 
-        d3.selectAll('fieldset#state label').classed('sel', false);
-        d3.select('label[for="state_' + state + '"]').classed('sel', true);
-
-        reColorTiles(state);
+        reColorTiles(carrier);
         //        updateIE8percents(state);
     });
 
@@ -247,7 +242,7 @@ d3.csv("data/data-mad-small.csv", function (d) {
                 drawHourlyChart(state, 0);
             }
             d3.select('#wtf .subtitle').html('Daily price development');
-            d3.select('#wtf .price').html('');
+            d3.select('#wtf .price').html('&nbsp;');
         });
 });
 
@@ -416,15 +411,15 @@ function isOldBrowser() {
 function addCarrierButtons() {
     for (var i = 0; i < carriers.length; i++) {
         var abbr = carriers[i];
-        var html = '<input type="radio" id="state_' + abbr + '" name="state" value="' + abbr + '"/><label for="state_' + abbr + '"><span class="' + abbr + '">' + abbr + '</span></label>';
+        var html = '<input type="radio" id="carrier_' + abbr + '" name="carrier" value="' + abbr + '"/><label for="carrier_' + abbr + '"><span class="' + abbr + '">' + abbr + '</span></label>';
 
-        $('fieldset#state').append(html);
+        $('fieldset#carrier').append(html);
     }
 }
 
 /* ************************** */
 
-function reColorTiles(state) {
+function reColorTiles(carrier) {
     var side = d3.select('#tiles').attr('class');
 
     if (side === 'front') {
@@ -445,7 +440,7 @@ function reColorTiles(state) {
         // loop over all possible flights on a departure date
         for (var t = 0; t < obj.maxFlightsOnDate; t++) {
             // check if row is correct (same departure date/time) 
-            var next = ffvData[state][flightCounter];
+            var next = ffvData[carrier][flightCounter];
             var selRow = ".d" + d + ".t" + t;
 
             // remove current data index classes (dataIdx) from all cells
@@ -501,7 +496,7 @@ function reColorTiles(state) {
 
     flipTiles();
     if (isOldBrowser() === false) {
-        drawHourlyChart(state, 0);
+        drawHourlyChart(carrier, 0);
     }
 }
 
@@ -571,14 +566,14 @@ function flipTiles() {
 
 /* ************************** */
 
-function drawHourlyChart(state, row) {
+function drawHourlyChart(carrier, row) {
 
     d3.selectAll('#hourly_values svg').remove();
 
     var w = 750,
         h = 150;
 
-    var rowData = ffvData[state][row];
+    var rowData = ffvData[carrier][row];
 
 
     var y = d3.scale.linear()
@@ -749,21 +744,3 @@ function selectHourlyChartBar(hour) {
 };
 
 /* ************************** */
-
-function createMap() {
-    var svg = d3.select("#map").append('svg:svg')
-        .attr('width', 320)
-        .attr('height', 202);
-
-    var g = svg.append('svg:g')
-        .attr('transform', 'scale(0.5) translate(-27, -134)');
-
-    for (s = 0; s < mapSVG.states.length; s++) {
-        var state = mapSVG.states[s];
-
-        var path = g.append('svg:path')
-            .attr('id', state)
-            .attr('class', 'state')
-            .attr('d', mapSVG[state]);
-    }
-}

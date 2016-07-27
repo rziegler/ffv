@@ -32,17 +32,17 @@
     float: left;
 }
 
-fieldset#state label,
-fieldset#state input {
+fieldset#carrier label,
+fieldset#carrier input {
     /*    display: none;*/
     display: inline !important;
 }
 
-fieldset#state.ff3 {
+fieldset#carrier.ff3 {
     width: 500px;
 }
 
-fieldset#state.ff3 label {
+fieldset#carrier.ff3 label {
     display: block !important;
 }
 
@@ -51,7 +51,7 @@ fieldset#type {
     float: left;
 }
 
-#state_all_label {
+#carrier_all_label {
     display: inline !important;
 }
 
@@ -194,30 +194,6 @@ th.h48 {
     border: 1px solid white;
 }
 
-#map {
-    float: left;
-    width: 320px;
-    height: 202px;
-    margin-bottom: 15px;
-}
-
-#map path.state {
-    fill: #ddd;
-    stroke: white;
-    stroke-width: 1px;
-}
-
-#map path.state:hover {
-    fill: #5eab1f;
-    fill: #999;
-    cursor: pointer;
-}
-
-#map path.state.sel {
-    fill: #444;
-    cursor: default;
-}
-
 #legend {
     /*    clear: left;*/
     margin-left: 24px;
@@ -261,16 +237,21 @@ th.h48 {
     float: left;
 }
 
-#states_nav {
+#navigation {
     clear: left;
-    width: 250px;
+    width: 600px;
     height: 40px;
     float: left;
     margin-left: 20px;
+    margin-bottom: 18px;
 }
 
-#states_nav p {
+#navigation p {
     margin-left: 4px;
+}
+
+#navigation fieldset {
+    margin-bottom: 8px;
 }
 
 #wtf {

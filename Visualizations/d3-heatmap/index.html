@@ -71,10 +71,29 @@
         <div id="old_browser_msg">We're sorry but your browser is really old and can't handle the full interactive experience. We recommend you upgrade to the latest version as soon as possible.</div>
 
 
-        <div id="states_nav">
+        <div id="navigation">
             <div class="controls">
-                <fieldset id="state">
+                <fieldset id="carrier">
                     <!-- filled dynamically with carriers -->
+                </fieldset>
+
+                <fieldset id="weekdays">
+                    <input type="radio" id="wday_all" name="type" value="all" checked="checked" />
+                    <label for="wday_all" class="sel"><span class="all">All Weekdays</span></label>
+                    <input type="radio" id="type_monday" name="type" value="monday" />
+                    <label for="type_monday"><span class="monday">Monday</span></label>
+                    <input type="radio" id="type_tuesday" name="type" value="tuesday" />
+                    <label for="type_tuesday"><span class="tuesday">Tuesday</span></label>
+                    <input type="radio" id="type_wednesday" name="type" value="wednesday" />
+                    <label for="type_wednesday"><span class="wednesday">Wednesday</span></label>
+                    <input type="radio" id="type_thursday" name="type" value="thursday" />
+                    <label for="type_thursday"><span class="thursday">Thursday</span></label>
+                    <input type="radio" id="type_friday" name="type" value="friday" />
+                    <label for="type_friday"><span class="friday">Friday</span></label>
+                    <input type="radio" id="type_saturday" name="type" value="saturday" />
+                    <label for="type_saturday"><span class="saturday">Saturday</span></label>
+                    <input type="radio" id="type_sunday" name="type" value="sunday" />
+                    <label for="type_sunday"><span class="sunday">Sunday</span></label>
                 </fieldset>
             </div>
             <div id="map"></div>
