@@ -20,9 +20,10 @@ if (isOldBrowser()) {
     $('#poweredby.old_browsers').show();
 }
 
-var buckets = 7, // was 11
-    colorScheme = 'grn',
-    days = [
+var buckets = 7; // was 11
+var colorScheme = 'grn';
+
+var days = [
         {
             name: 'Monday',
             abbr: 'Mo'
@@ -327,6 +328,7 @@ var ffvData;
 
 var deltaTimes;
 var departureDates;
+var departureDatesWithMaxDepartureTimes; // departure dates with max number of times per carrier
 var carriers;
 
 //if (isOldBrowser() === false) {
@@ -334,6 +336,7 @@ var carriers;
 //}
 //addStateButtons();
 var dateParser = d3.time.format("%Y-%m-%d");
+var timeParser = d3.time.format("%H:%M:%S");
 
 var descendingIntStrings = function (a, b) {
     a = parseInt(a);
@@ -347,6 +350,12 @@ var ascendingDateStrings = function (a, b) {
     return d3.ascending(a, b);
 };
 
+var ascendingTimeStrings = function (a, b) {
+    a = timeParser.parse(a);
+    b = timeParser.parse(b);
+    return d3.ascending(a, b);
+};
+
 d3.select('#vis').classed(colorScheme, true);
 
 d3.csv("data/data-mad.csv", function (d) {
@@ -356,6 +365,7 @@ d3.csv("data/data-mad.csv", function (d) {
         carrier: d.carrier,
         flightNumber: d.flightNumber,
         departureDate: d.departureDate,
+        departureTime: d.departureTime,
         requestDate: d.requestDate,
         deltaTime: +d.deltaTime,
         price: +d.pmin,
@@ -426,15 +436,63 @@ d3.csv("data/data-mad.csv", function (d) {
     departureDates.sort(function (a, b) {
         return d3.ascending(a.date, b.date);
     });
-    console.log(departureDates);
+    //    console.log(departureDates);
+
+    /*---*/
+    departureDatesWithMaxDepartureTimes = d3.nest()
+        .key(function (d) {
+            return d.departureDate;
+        }).sortKeys(ascendingDateStrings)
+        .key(function (d) {
+            return d.carrier;
+        })
+        .rollup(function (leaves) {
+            var value = leaves[0].departureDate;
+            return {
+                date: dateParser.parse(value),
+                name: value,
+                abbr: value.split("-")[2] + "." + value.split("-")[1],
+                carrier: leaves[0].carrier,
+                maxFlightsOnDay: leaves.length / deltaTimes.length
+            };
+        })
+        .entries(data);
+    console.log(departureDatesWithMaxDepartureTimes);
+
+    var test = d3.nest()
+        .key(function (d) {
+            return d.departureDate;
+        }).sortKeys(ascendingDateStrings)
+        //        .key(function (d) {
+        //            return d.carrier;
+        //        })
+        .rollup(function (leaves) {
+
+            var perCarrier = d3.nest()
+                .key(function (x) {
+                    return x.carrier;
+                }).rollup(function (l) {
+                    return l.length / deltaTimes.length;
+                }).map(leaves, d3.map);
+
+            var value = leaves[0].departureDate;
+            return {
+                date: dateParser.parse(value),
+                name: value,
+                abbr: value.split("-")[2] + "." + value.split("-")[1],
+                maxFlightsOnDate: d3.max(perCarrier.values())
+            };
+        })
+        .map(data, d3.map);
+    console.log(test);
 
     /* ************************** */
 
-    addCarrierButtons();
+    //    addCarrierButtons();
 
     // start the action
-    createTiles();
-    reColorTiles('AB', 'AB');
+    //    createTiles();
+    //    reColorTiles('AB', 'AB');
 
 
     /* ************************** */
