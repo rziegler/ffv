@@ -499,48 +499,57 @@ d3.csv("data/data-mad-small.csv", function (d) {
 
     // tiles mouseover events
     $('#tiles td').hover(function () {
-        $(this).addClass('sel');
+            $(this).addClass('sel');
 
-        var tmp = $(this).attr('id').split('d').join('').split('h');
-        var departureDateIndex = tmp[0];
-        var deltaTimeIndex = tmp[1];
-        var departureDate = parseInt(departureDateIndex);
-        var deltaTime = parseInt(deltaTimeIndex);
+            var tmp = $(this).attr('id').split(/[d,t,h ]/);
+            var departureDateIndex = tmp[1];
+            var departureTimeIndex = tmp[2];
+            var deltaTimeIndex = tmp[3];
+            var departureDate = parseInt(departureDateIndex);
+            var departureTime = parseInt(departureTimeIndex);
+            var deltaTime = parseInt(deltaTimeIndex);
 
-        var $sel = d3.select('#state label.sel span');
-        if ($sel.empty()) {
-            var state = carriers[0];
-        } else {
-            var state = $sel.attr('class');
-        }
+            var tmp = $(this).attr('class').split(' ')[2].split('data-idx');
+            var dataIdxIndex = tmp[1];
+            var dataIdx = parseInt(dataIdxIndex);
 
-        if (isOldBrowser() === false) {
-            drawHourlyChart(state, departureDate);
-            selectHourlyChartBar(deltaTime);
-        }
+            var $sel = d3.select('#state label.sel span');
+            if ($sel.empty()) {
+                var state = carriers[0];
+            } else {
+                var state = $sel.attr('class');
+            }
 
-        var type = types[selectedType()];
-        var selFlightNumber = ffvData[state][departureDateIndex].values[deltaTimeIndex].values[0].flightNumber;
-        var selDepartureDate = departureDates[departureDate].name;
+            if (isOldBrowser() === false) {
+                drawHourlyChart(state, departureDate);
+                selectHourlyChartBar(deltaTime);
+            }
 
-        d3.select('#wtf .subtitle').html(' Price development for ' + selFlightNumber + ' on ' + selDepartureDate);
+            var type = types[selectedType()];
+            var selFlight = ffvData[state][dataIdx];
+            var selFlightNumber = selFlight.values[deltaTimeIndex].values[0].flightNumber;
+            var selDepartureDate = selFlight.values[deltaTimeIndex].values[0].departureDate;
+            var selDepartureTime = selFlight.values[deltaTimeIndex].values[0].departureTime;
 
-    }, function () {
-        $(this).removeClass('sel');
+            d3.select('#wtf .subtitle').html(' Price development for ' + selFlightNumber + ' on ' + selDepartureDate + ' at ' + selDepartureTime);
 
-        var $sel = d3.select('#state label.sel span');
+        },
+        function () {
+            $(this).removeClass('sel');
 
-        if ($sel.empty()) {
-            var state = carriers[0];
-        } else {
-            var state = $sel.attr('class');
-        }
-        if (isOldBrowser() === false) {
-            drawHourlyChart(state, 0);
-        }
-        var type = types[selectedType()];
-        d3.select('#wtf .subtitle').html(type + ' traffic daily');
-    });
+            var $sel = d3.select('#state label.sel span');
+
+            if ($sel.empty()) {
+                var state = carriers[0];
+            } else {
+                var state = $sel.attr('class');
+            }
+            if (isOldBrowser() === false) {
+                drawHourlyChart(state, 0);
+            }
+            var type = types[selectedType()];
+            d3.select('#wtf .subtitle').html(type + ' traffic daily');
+        });
 });
 
 //d3.json('tru247.json', function (json) {
@@ -759,14 +768,22 @@ function reColorTiles(state, view) {
         for (var t = 0; t < obj.maxFlightsOnDate; t++) {
             // check if row is correct (same departure date/time) 
             var next = ffvData[state][flightCounter];
+            var selRow = ".d" + d + ".t" + t;
+
+            // remove current data index classes (dataIdx) from all cells
+            var selRowCells = d3.select(selRow).selectAll("td");
+            removeCurrentDataIndexClasses(selRowCells);
 
             if (undefined != next && next.key.split(" ")[0] === obj.name) {
                 console.log(next.key + '<>' + obj.name + '-> true');
 
-                var selRow = ".d" + d + ".t" + t;
                 if (d3.select(selRow).classed("hidden")) {
                     d3.select(selRow).classed("hidden", false);
                 }
+
+                // add the data index class to the cells
+                var clsDataIndex = 'data-idx' + flightCounter;
+                selRowCells.classed(clsDataIndex, true);
 
                 // color all the tiles of the row
                 for (var h = 0; h < next.values.length; h++) { // delta time
@@ -822,76 +839,26 @@ function reColorTiles(state, view) {
         departureDateCounter++;
     }
 
-
-
-    //    var tileRows = d3.selectAll("#tiles tr");
-    //
-    //
-    //
-    //    for (var d = 0; d < tileRows[0].length; d++) { // start with 1 -> skip header row
-    //
-    //        // check if row is correct (same departure date/time) 
-    //        var next = ffvData[state][departureDateCounter];
-    //
-    //
-    //
-    //        //        var nextValue = next.key;
-    //        //        var splitted = nextValue.split(" ");
-    //        //        var dateStr = splitted[0];
-    //        //        var timeStr = splitted[1];
-    //        //        var nextValueAbbr = dateStr.split("-")[2] + "." + dateStr.split("-")[1] + " " + timeStr.split(":")[0] + ":" + timeStr.split(":")[1];
-    //        //
-    //        //        console.log(nextValueAbbr);
-    //        //        var currentRow = tileRows[0][d];
-    //        //        console.log(next.key);
-    //        //        console.log(currentRow);
-    //        //        var tileHeader = d3.select(currentRow).select("th").property('innerText');
-    //        //
-    //        //        console.log(tileHeader);
-    //
-    //
-    //
-    //
-    //
-    //        if (nextValueAbbr === tileHeader) {
-    //            console.log('true');
-    //        } else {
-    //            console.log('false');
-    //        }
-    //
-    //    }
-
-
-    //    console.log(ffvData[state].length);
-    //    for (var d = 0; d < ffvData[state].length; d++) {
-    //        for (var h = 0; h < ffvData[state][d].values.length; h++) {
-    //            var sel = '#d' + d + 'h' + h + ' .tile .' + side;
-    //            // TODO: hier gibt es mehr als 1 flug pro tag!!!
-    //            //            console.log(ffvData[state][d].values[h]);
-    //            var val = ffvData[state][d].values[h].values[0].price;
-    //            var bucket = ffvData[state][d].values[h].values[0].bin;
-    //
-    //            if (view !== 'all') {
-    //                val = ffvData[state][d].values[h].values[0].price;
-    //            }
-    //
-    //            // erase all previous bucket designations on this cell
-    //            for (var i = 1; i <= buckets; i++) {
-    //                var cls = 'q' + i + '-' + buckets;
-    //                d3.select(sel).classed(cls, false);
-    //            }
-    //
-    //            // set new bucket designation for this cell
-    //            var cls = 'q' + (val > 0 ? bucket : 0) + '-' + buckets;
-    //            d3.select(sel).classed(cls, true);
-    //        }
-    //        console.log(ffvData[state].length + ">" + d);
-    //    }
-
     flipTiles();
     if (isOldBrowser() === false) {
         drawHourlyChart(state, 0);
     }
+}
+
+function removeCurrentDataIndexClasses(element) {
+    var searchPattern = new RegExp('^data-idx');
+
+    element.each(function (d, i) {
+        var element = d3.select(this);
+        var cls = element.attr('class');
+        cls.split(" ").forEach(function (s) {
+            // remove all classes starting with 'data-idx'
+            if (searchPattern.test(s)) {
+                //                console.log("remove class " + s);
+                element.classed(s, false);
+            }
+        });
+    });
 }
 
 /* ************************** */
