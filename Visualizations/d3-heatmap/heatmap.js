@@ -108,7 +108,7 @@ var ascendingTimeStrings = function (a, b) {
 
 d3.select('#vis').classed(colorScheme, true);
 
-d3.csv("data/data-dest-kef.csv", function (d) {
+d3.csv("data/data-dest-beg.csv", function (d) {
     return {
         destination: d.destination,
         origin: d.origin,
@@ -490,6 +490,11 @@ function addCarrierButtons() {
         var html = '<input type="radio" id="carrier_' + abbr + '" name="carrier" value="' + abbr + '"/><label for="carrier_' + abbr + '"><span class="' + abbr + '">' + abbr + '</span></label>';
 
         $('fieldset#carrier').append(html);
+
+        if (i == 0) {
+            // make the first button selected
+            d3.select('fieldset#carrier label').classed("sel", true);
+        }
     }
 }
 
