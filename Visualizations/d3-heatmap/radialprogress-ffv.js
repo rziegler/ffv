@@ -1,102 +1,3 @@
-//**Vizuly themes and skins** make it easy to implement subtle or significant changes to the look, feel, and responsiveness of a visual.
-// Often times, little changes can make a big impact on how well a visual tells a story and communicates the underlying data.
-// In this guide you will see how to make such changes with a vizuly component.
-//
-// Before we dive into the code, let's talk about the design principle of
-// <a href='https://en.wikipedia.org/wiki/Separation_of_concerns' target='_blank'>**separation of concerns**</a>
-// In Vizuly, each component is a combination of the core viz.js file (like <code> vizuly.viz.bar </code> ) and an associated theme
-// file (like <code> vizuly.theme.column_bar </code>.)
-//
-// The core viz.js is responsible for measuring, layout, adding and removing of display elements (usually svg), and implementing
-// user interaction logic (mouse/touch events, zooming, panning, etc..)
-// The theme file contains the logic that determines the look and feel of each element (axis lines, shapes, fonts, backgrounds, etcc), and how a given element responds to user input.
-//
-// Within a **theme** itself there can be one or more **skins**. A skin is a collection of style parameters, much like a CSS class.  The theme determines
-// **how** to the skin to a visual, and the skin tells the theme what parameters to **apply**.   This allows a programmer to quickly swap out a skin
-// to change such things as colors, fonts, fills, strokes, etc.., without having to worry about how to apply those changes to a component.   In all of the vizuly example files, you can see multiple
-// skins implemented within a single theme.
-//
-// This guide we will discuss how the internals of a theme work, so you can extend them to make your own.
-// For our walkthrough we will be looking at the the <code>src/theme/radialprogress.js</code> theme that is used for both the vizuly bar chart and column chart.
-//
-// All themes implement the same object **life-cycle** as described below:
-//
-// * **instantiation** - requires a viz object so it can implement look and feel changes.
-// * **applyCallBacks()** - binds callbacks to the viz events so it can apply style and property changes as the viz outputs changes.
-// * **applyTheme()** - takes properties from the selected skin and applies it to the viz output.
-// * **onEventXXX()** - a set of function callbacks that change output depending on the event emitted by the component.
-// * **release** - unbind any callbacks, undo any display element changes, and release the viz.
-//
-/*
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- */
-
-//Here we **instantiate** the theme borrowing from the same design pattern as D3.js where we use an encapsulated function chained object.
-//Each theme requires a viz component at construction.  It is important to note that while a viz component has no
-//dependency on a theme, the theme does require knowledge of the viz display OUTPUT (but not the internals), so it can modify them.
-//
 vizuly.theme.ffv = function (viz) {
 
     //The first thing we do is define the skins themselves as objects.
@@ -111,8 +12,8 @@ vizuly.theme.ffv = function (viz) {
         Alert: {
             name: "Alert", // Skin Name
             label_color: "#444", // Color of the center label
-            track_fill: "#DDDDDD", // Color of the background 'track' of the progress bar
-            progress_colors: ["#005824", "#edf8fb"], // Colors used for progress bar
+            track_fill: "#FDCA5D", // Color of the background 'track' of the progress bar
+            progress_colors: ["#444", "#999"], // Colors used for progress bar
             arc_fill: function (d, i) {
                 return this.progress_colors[i % 2]; // Dynamic function that returns a fill based on the index value
             },

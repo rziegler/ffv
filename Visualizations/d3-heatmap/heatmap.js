@@ -198,7 +198,7 @@ addDestinationButtons();
 
 d3.select('#vis').classed(colorScheme, true);
 
-d3.csv("data/data-dest-mad-small.csv", function (d) {
+d3.csv("data/data-dest-mad.csv", function (d) {
     return {
         destination: d.destination,
         origin: d.origin,
@@ -335,7 +335,7 @@ d3.csv("data/data-dest-mad-small.csv", function (d) {
         var weekday = $(this).val();
 
         d3.selectAll('fieldset#weekday label').classed('sel', false);
-        d3.select('label[for="weekday_' + weekday + '"]').classed('sel', true);
+        d3.select('label[for="wday_' + weekday + '"]').classed('sel', true);
 
         //        console.log(weekday);
         d3.selectAll('tr.wd-hidden').classed('wd-hidden', false);
