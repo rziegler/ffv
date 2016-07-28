@@ -53,6 +53,49 @@ PrintMinPrice <- function(df, fNumber, departureDateAsString) {  #df = data.flig
   print(p)
 }
 
+FilterDataForDestination <- function(dest) {
+  if(dest == "ALL") {
+    data.tmp <- data.flights.completeSeriesOnly %>%
+      ungroup() %>%
+      arrange(flightNumber, departureDate, requestDate) %>%
+      group_by(flightNumber, departureDate, departureTime, departureWeekday, requestDate, deltaTime, origin, destination, carrier) %>%
+      summarise(
+        pmin = min(pmin)
+      )
+  } else {
+    data.tmp <- data.flights.completeSeriesOnly %>%
+      ungroup() %>%
+      arrange(flightNumber, departureDate, requestDate) %>%
+      group_by(flightNumber, departureDate, departureTime, departureWeekday, requestDate, deltaTime, origin, destination, carrier) %>%
+      filter(
+        destination == dest
+      ) %>%
+      summarise(
+        pmin = min(pmin)
+      )
+  }
+  
+  data.tmp <- data.tmp %>%
+    ungroup() %>%
+    group_by(flightNumber, departureDate) %>%
+    mutate(
+      priceChangeRel = pmin/lag(pmin, default = first(pmin)),
+      priceChangeAbs = pmin/first(pmin),
+      pr = dense_rank(pmin),
+      bin = cut(pmin, 7),
+      binRanked = cut(pmin, 7, labels=c(1,2,3,4,5,6,7)),
+      priceChangeRelBoolean = ifelse((pmin == lag(pmin, default = first(pmin))), 0, ifelse(pmin > lag(pmin, default = first(pmin)), 1, -1)),
+      priceChangeAbsBoolean = ifelse((pmin == first(pmin)), 0, ifelse(pmin > first(pmin), 1, -1))
+    )
+  
+  data.tmp <- data.tmp %>%
+    ungroup() %>%
+    group_by(origin, destination, flightNumber, departureDate, requestDate) %>%
+    # select(origin, destination, flightNumber, departureDate, requestDate, deltaTime, pmin, priceChangeRel, priceChangeAbs, pr, pcm, priceChangeRelBoolean, priceChangeAbsBoolean) %>%
+    arrange(origin, destination, flightNumber, departureDate, requestDate)
+  
+  return(data.tmp)
+}
 
 # --- import libraries
 #install.packages("RNeo4j", "dplyr", "ggplot2", "tidyr", "data.table")  # only needs to be once
