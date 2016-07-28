@@ -108,7 +108,7 @@ var ascendingTimeStrings = function (a, b) {
 
 d3.select('#vis').classed(colorScheme, true);
 
-d3.csv("data/data-mad.csv", function (d) {
+d3.csv("data/data-dest-kef.csv", function (d) {
     return {
         destination: d.destination,
         origin: d.origin,
