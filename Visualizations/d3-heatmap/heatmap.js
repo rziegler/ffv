@@ -23,6 +23,93 @@ if (isOldBrowser()) {
 var buckets = 7; // was 11
 var colorScheme = 'grn';
 
+
+var destinations = d3.map([
+    {
+        abbr: 'AMS',
+        name: 'Amsterdam'
+    },
+    {
+        abbr: 'BEG',
+        name: 'Belgrade'
+    },
+    {
+        abbr: 'BKK',
+        name: 'Bangkok'
+    },
+    {
+        abbr: 'BOM',
+        name: 'Bombay'
+    },
+    {
+        abbr: 'DXB',
+        name: 'Dubai'
+    },
+    {
+        abbr: 'GRU',
+        name: 'Sao Paolo'
+    },
+    {
+        abbr: 'ICN',
+        name: 'Seoul'
+    },
+    {
+        abbr: 'IST',
+        name: 'Istanbul'
+    },
+    {
+        abbr: 'JFK',
+        name: 'New York'
+    },
+    {
+        abbr: 'KEF',
+        name: 'Reykjavik'
+    },
+    {
+        abbr: 'LHR',
+        name: 'London'
+    },
+    {
+        abbr: 'MAD',
+        name: 'Madrid'
+    },
+    {
+        abbr: 'MLA',
+        name: 'Malta'
+    },
+    {
+        abbr: 'NRT',
+        name: 'Tokyo'
+    },
+    {
+        abbr: 'PEK',
+        name: 'Peking'
+    },
+    {
+        abbr: 'RHO',
+        name: 'Rhode'
+    },
+    {
+        abbr: 'RIX',
+        name: 'Riga'
+    },
+    {
+        abbr: 'SIN',
+        name: 'Singapore'
+    },
+    {
+        abbr: 'SVO',
+        name: 'Moscou'
+    },
+    {
+        abbr: 'YYZ',
+        name: 'Toronto'
+    }
+
+], function (d) {
+    return d.abbr;
+});
+
 var days = d3.map([
     {
         name: 'Monday',
@@ -106,9 +193,12 @@ var ascendingTimeStrings = function (a, b) {
     return d3.ascending(a, b);
 };
 
+
+addDestinationButtons();
+
 d3.select('#vis').classed(colorScheme, true);
 
-d3.csv("data/data-dest-beg.csv", function (d) {
+d3.csv("data/data-dest-mad-small.csv", function (d) {
     return {
         destination: d.destination,
         origin: d.origin,
@@ -266,6 +356,18 @@ d3.csv("data/data-dest-beg.csv", function (d) {
 
     /* ************************** */
 
+    // destination list event listener
+    $('input[name="destination"]').change(function () {
+        var destination = $(this).val();
+
+        d3.selectAll('fieldset#destination label').classed('sel', false);
+        d3.select('label[for="destination_' + destination + '"]').classed('sel', true);
+
+        console.log(destination);
+    });
+
+    /* ************************** */
+
     // tiles mouseover events
     $('#tiles td').hover(function () {
             $(this).addClass('sel');
@@ -292,6 +394,7 @@ d3.csv("data/data-dest-beg.csv", function (d) {
             if (isOldBrowser() === false) {
                 drawHourlyChart(carrier, dataIdx);
                 selectHourlyChartBar(deltaTime);
+                drawMinMaxPriceChart(carrier, dataIdx);
             }
 
             var selFlight = ffvData[carrier][dataIdx];
@@ -316,6 +419,7 @@ d3.csv("data/data-dest-beg.csv", function (d) {
             }
             if (isOldBrowser() === false) {
                 drawHourlyChart(carrier, 0);
+                drawMinMaxPriceChart(carrier, 0);
             }
             d3.select('#wtf .subtitle').html('Daily price development');
             d3.select('#wtf .price').html('&nbsp;');
@@ -500,6 +604,25 @@ function addCarrierButtons() {
 
 /* ************************** */
 
+function addDestinationButtons() {
+    var destKeys = destinations.keys().sort(d3.ascending);
+    for (var i = 0; i < destKeys.length; i++) {
+        var dest = destinations.get(destKeys[i]);
+        var abbr = dest.abbr;
+        var name = dest.name
+        var html = '<input type="radio" id="dest_' + abbr + '" name="destination" value="' + abbr + '"/><label for="dest_' + abbr + '"><span class="' + abbr + '">' + name + '</span></label>';
+
+        $('fieldset#destination').append(html);
+
+        if (i == 0) {
+            // make the first button selected
+            d3.select('fieldset#destination label').classed("sel", true);
+        }
+    }
+}
+
+/* ************************** */
+
 function reColorTiles(carrier) {
     var side = d3.select('#tiles').attr('class');
 
@@ -577,6 +700,7 @@ function reColorTiles(carrier) {
     flipTiles();
     if (isOldBrowser() === false) {
         drawHourlyChart(carrier, 0);
+        drawMinMaxPriceChart(carrier, 0);
     }
 }
 
@@ -655,7 +779,6 @@ function drawHourlyChart(carrier, row) {
 
     var rowData = ffvData[carrier][row];
 
-
     var y = d3.scale.linear()
         .domain([0, d3.max(rowData.values, function (d) {
             return d.values[0].price;
@@ -704,6 +827,59 @@ function drawHourlyChart(carrier, row) {
             return d.values[0].deltaTime;
         });
 }
+
+/* ************************** */
+
+function drawMinMaxPriceChart(carrier, row) {
+    d3.selectAll('#minmax div').remove();
+
+    var w = 250,
+        h = 250;
+
+    var rowData = ffvData[carrier][row];
+    var minPrice = d3.min(rowData.values, function (d) {
+        return d.values[0].price;
+    });
+    var maxPrice = d3.max(rowData.values, function (d) {
+        return d.values[0].price;
+    });
+
+    console.log(minPrice + " " + maxPrice);
+
+    var chart = d3.select("#minmax");
+
+    var chartVizComp = vizuly.component.radial_progress(document.getElementById("minmax"));
+    var chartTheme = vizuly.theme.ffv(chartVizComp).skin(vizuly.skin.FFV_ALERT);
+
+    chartVizComp.data(maxPrice + minPrice) // Current value
+        .height(h)
+        .min(0)
+        .max(maxPrice)
+        .capRadius(0)
+        //        .on("tween", onTween) // On the arc animation we create a callback to update the label
+        //        .on("mouseover", onMouseOver) // mouseover callback - all viz components issue these events
+        //        .on("mouseout", onMouseOut) // mouseout callback - all viz components issue these events
+        //        .on("click", onClick) // mouseout callback - all viz components issue these events
+        .startAngle(250) // Angle where progress bar starts
+        .endAngle(110) // Angle where the progress bar stops
+        .arcThickness(.12) // The thickness of the arc (ratio of radius)
+        .label(function (d, i) { // The 'label' property allows us to use a dynamic function for labeling.
+            var percentSaved = (1 - minPrice / maxPrice) * 100;
+            return '-' + d3.format(".2f")(percentSaved) + '%'; //d3.format(".2f")(d);
+        });
+
+
+    var divWidth = w;
+
+    chart.style("width", divWidth + 'px').style("margin-left", (divWidth * .05) + "px");
+    chartVizComp.width(divWidth).height(divWidth).radius(divWidth / 2.2).update();
+
+
+
+}
+
+
+
 
 /* ************************** */
 

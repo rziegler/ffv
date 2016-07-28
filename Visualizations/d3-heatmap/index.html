@@ -24,10 +24,13 @@
 
     <!-- Design and code by Joe Golike @golike for Trulia.com -->
 
-    <title>House Hunting All Day, Every Day - Trulia Insights</title>
+    <title>Flight Fare Visualization</title>
+
+    <!-- Vizuly specific style sheets -->
+    <link rel="stylesheet" href="../lib/styles/vizuly.css">
+    <!--    <link rel="stylesheet" href="../lib/styles/vizuly_radial_progress.css">-->
 
     <link rel="stylesheet" media="all" href="../lib/css/insights-1.0.css?v=1.0" />
-    <!--    <link rel="stylesheet" media="all" href="tru247.css?v=1.0" />-->
     <link rel="stylesheet" media="all" href="heatmap.css" />
 
     <!--[if lt IE 9]>
@@ -73,6 +76,9 @@
 
         <div id="navigation">
             <div class="controls">
+                <fieldset id="destination">
+                    <!-- filled dynamically with destinations -->
+                </fieldset>
                 <fieldset id="carrier">
                     <!-- filled dynamically with carriers -->
                 </fieldset>
@@ -116,6 +122,7 @@
                 <p class="price"></p>
                 <div class="svg"></div>
             </div>
+            <div id="minmax" class="radial_container"></div>
         </div>
         <div id="footer">Based on traffic on <a href="http://trulia.com">Trulia.com</a> and <a href="http://www.trulia.com/mobile/iphone/">Trulia Mobile</a> between June and August 2011. "Computer" traffic includes all house hunting activity coming from desktops and laptop computers while "Mobile" includes app and mobile web traffic from cell phones and tablets. Times are normalized for their respective timezones.</div>
 
@@ -127,6 +134,12 @@
 <script src="../lib/js/insights.js?v=1.0"></script>
 <!--<script src="tru247.js?v=1.01"></script>-->
 <!--<script src="nest.js"></script>-->
+
+<!-- vizuly scripts -->
+<script src="lib/js/vizuly_core.min.js"></script>
+<script src="lib/js/vizuly_radialprogress.min.js"></script>
+<script src="radialprogress-ffv.js"></script>
+
 <script src="heatmap.js"></script>
 
 </html>
