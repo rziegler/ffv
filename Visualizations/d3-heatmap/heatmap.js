@@ -831,10 +831,33 @@ function drawHourlyChart(carrier, row) {
 /* ************************** */
 
 function drawMinMaxPriceChart(carrier, row) {
-    d3.selectAll('#minmax div').remove();
+    //    var chart = d3.select("#minmaxviz");
+    //
+    //    var cls = chart.attr('class');
+    //    console.log(cls);
+    //    var tmp = chart.attr('class').split('data-idx');
+    //    var oldRow = tmp.length === 0 ? '' : tmp[1];
+    //
+    //    console.log(row + " >> " + oldRow);
+    //
+    //    if (row == oldRow) {
+    //        // do nothing
+    //        console.log("no reason to change");
+    //    } else {
+    //        removeCurrentDataIndexClasses(chart);
+    //        redrawChart(carrier, row);
+    //    }
 
-    var w = 250,
-        h = 250;
+    drawMinMaxPriceChartById(carrier, row, 'minmax', 'viz1');
+    //    drawMinMaxPriceChartById(carrier, row, 'minmax', 'viz2');
+}
+
+function drawMinMaxPriceChartById(carrier, row, divId, vizId) {
+    var chart = d3.select("#" + vizId);
+    d3.selectAll('#' + vizId + ' div').remove();
+
+    var w = 200,
+        h = 200;
 
     var rowData = ffvData[carrier][row];
     var minPrice = d3.min(rowData.values, function (d) {
@@ -844,38 +867,36 @@ function drawMinMaxPriceChart(carrier, row) {
         return d.values[0].price;
     });
 
-    console.log(minPrice + " " + maxPrice);
+    //    console.log(minPrice + " " + maxPrice);
+    //
+    //    var clsDataIndex = 'data-idx' + row;
+    //    chart.classed(clsDataIndex, true);
 
-    var chart = d3.select("#minmax");
-
-    var chartVizComp = vizuly.component.radial_progress(document.getElementById("minmax"));
+    var chartVizComp = vizuly.component.radial_progress(document.getElementById(vizId));
     var chartTheme = vizuly.theme.ffv(chartVizComp).skin(vizuly.skin.FFV_ALERT);
 
     chartVizComp.data(maxPrice + minPrice) // Current value
+        .width(w)
         .height(h)
+        .radius(w / 2.2)
         .min(0)
         .max(maxPrice)
         .capRadius(0)
-        //        .on("tween", onTween) // On the arc animation we create a callback to update the label
-        //        .on("mouseover", onMouseOver) // mouseover callback - all viz components issue these events
-        //        .on("mouseout", onMouseOut) // mouseout callback - all viz components issue these events
-        //        .on("click", onClick) // mouseout callback - all viz components issue these events
+        //        .on("mouseover", function (viz, d, i) {
+        //            console.log(viz);
+        //        })
         .startAngle(250) // Angle where progress bar starts
         .endAngle(110) // Angle where the progress bar stops
-        .arcThickness(.12) // The thickness of the arc (ratio of radius)
-        .label(function (d, i) { // The 'label' property allows us to use a dynamic function for labeling.
+        .arcThickness(.16) // The thickness of the arc (ratio of radius)
+        .duration(0)
+        .label(function (d, i) {
             var percentSaved = (1 - minPrice / maxPrice) * 100;
-            return '-' + d3.format(".2f")(percentSaved) + '%'; //d3.format(".2f")(d);
-        });
+            return '-' + d3.format(".2f")(percentSaved) + '%';
+        })
+        .update();
 
-
-    var divWidth = w;
-
-    chart.style("width", divWidth + 'px').style("margin-left", (divWidth * .05) + "px");
-    chartVizComp.width(divWidth).height(divWidth).radius(divWidth / 2.2).update();
-
-
-
+    d3.select('#' + divId + ' .min').html('Minimum price CHF ' + minPrice);
+    d3.select('#' + divId + ' .max').html('Maximum price CHF ' + maxPrice);
 }
 
 

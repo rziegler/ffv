@@ -73,6 +73,8 @@ fieldset#type {
     clear: all;
     margin-bottom: 20px;
     margin-left: 16px;
+    width: 300px;
+    float: left;
     /*    height: 370px;*/
     /*    height: 285px;*/
 }
@@ -264,7 +266,7 @@ th.h48 {
 }
 
 #wtf {
-    float: left;
+    float: right;
     width: 515px;
     margin-left: 32px;
 }
@@ -370,7 +372,7 @@ th.h48 {
 }
 
 #hourly_values {
-    float: left;
+    float: right;
     width: 550px;
 }
 
@@ -393,6 +395,19 @@ th.h48 {
 
 #hourly_values svg text.hidden {
     display: none;
+}
+
+#minmax {
+    /*    width: 200px;*/
+    /*    margin-left: 10px;*/
+}
+
+#viz1 {
+    float: left;
+}
+
+#viz2 {
+    float: right;
 }
 
 #minmax .vz-background {

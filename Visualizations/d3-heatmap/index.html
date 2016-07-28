@@ -27,7 +27,7 @@
     <title>Flight Fare Visualization</title>
 
     <!-- Vizuly specific style sheets -->
-    <link rel="stylesheet" href="../lib/styles/vizuly.css">
+    <link rel="stylesheet" href="../lib/css/vizuly.css">
     <!--    <link rel="stylesheet" href="../lib/styles/vizuly_radial_progress.css">-->
 
     <link rel="stylesheet" media="all" href="../lib/css/insights-1.0.css?v=1.0" />
@@ -104,6 +104,7 @@
             </div>
             <div id="map"></div>
         </div>
+
         <div id="vis"></div>
 
         <div id="wtf">
@@ -122,8 +123,25 @@
                 <p class="price"></p>
                 <div class="svg"></div>
             </div>
-            <div id="minmax" class="radial_container"></div>
+            <div id="minmax">
+                <p class="subtitle">Percentual savings</p>
+                <div id="viz1" class="radial_container">
+                    <div></div>
+                </div>
+                <!--
+                <div id="viz2" class="radial_container">
+    <div></div>
+</div>
+-->
+
+                <p class="subtitle min"></p>
+                <p class="subtitle max"></p>
+            </div>
+
+
         </div>
+
+
         <div id="footer">Based on traffic on <a href="http://trulia.com">Trulia.com</a> and <a href="http://www.trulia.com/mobile/iphone/">Trulia Mobile</a> between June and August 2011. "Computer" traffic includes all house hunting activity coming from desktops and laptop computers while "Mobile" includes app and mobile web traffic from cell phones and tablets. Times are normalized for their respective timezones.</div>
 
     </div>
