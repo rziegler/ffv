@@ -150,13 +150,10 @@ for (destinationCode in destinationCodes){
   var.filename <- sprintf("data-dest-%s.csv", tolower(destinationCode))
   
   assign(var.name, FilterDataForDestination(destinationCode))
-  write.csv(var.name, var.filename, row.names = FALSE)
+  write.csv(get(var.name), var.filename, row.names = FALSE)
 }
 
 
-
-data.mad.small <- data.mad %>% filter( departureDate >= '2016-06-29', departureDate < '2016-07-02')
-write.csv(data.mad.small, "data-dest-mad-small.csv", row.names = FALSE)
 
 # -- plots for LX316
 
