@@ -161,7 +161,7 @@ var data;
 var ffvData;
 
 var deltaTimes;
-var departureDates;
+//var departureDates;
 var departureDatesWithMaxDepartureTimes; // departure dates with max number of times per carrier
 var carriers;
 
@@ -198,7 +198,7 @@ addDestinationButtons();
 
 d3.select('#vis').classed(colorScheme, true);
 
-d3.csv("data/data-dest-mad.csv", function (d) {
+d3.csv("data/data-dest-mad-small.csv", function (d) {
     return {
         destination: d.destination,
         origin: d.origin,
@@ -261,22 +261,22 @@ d3.csv("data/data-dest-mad.csv", function (d) {
     /* ************************** */
 
     // y-axis data -> departure dates
-    departureDates = d3.map(data,
-        function (d) {
-            return d.departureDate;
-        }).keys();
-
-    // map into array with ints instead of Strings (keys() of map returns Strings)
-    departureDates = $.map(departureDates, function (value, index) {
-        return [{
-            date: dateParser.parse(value),
-            name: value,
-            abbr: value.split("-")[2] + "." + value.split("-")[1]
-        }];
-    });
-    departureDates.sort(function (a, b) {
-        return d3.ascending(a.date, b.date);
-    });
+    //    departureDates = d3.map(data,
+    //        function (d) {
+    //            return d.departureDate;
+    //        }).keys();
+    //
+    //    // map into array with ints instead of Strings (keys() of map returns Strings)
+    //    departureDates = $.map(departureDates, function (value, index) {
+    //        return [{
+    //            date: dateParser.parse(value),
+    //            name: value,
+    //            abbr: value.split("-")[2] + "." + value.split("-")[1]
+    //        }];
+    //    });
+    //    departureDates.sort(function (a, b) {
+    //        return d3.ascending(a.date, b.date);
+    //    });
     //    console.log(departureDates);
 
     /*---*/
@@ -395,6 +395,7 @@ d3.csv("data/data-dest-mad.csv", function (d) {
                 drawHourlyChart(carrier, dataIdx);
                 selectHourlyChartBar(deltaTime);
                 drawMinMaxPriceChart(carrier, dataIdx);
+                drawBucketChart(carrier, dataIdx);
             }
 
             var selFlight = ffvData[carrier][dataIdx];
@@ -420,155 +421,12 @@ d3.csv("data/data-dest-mad.csv", function (d) {
             if (isOldBrowser() === false) {
                 drawHourlyChart(carrier, 0);
                 drawMinMaxPriceChart(carrier, 0);
+                drawBucketChart(carrier, 0);
             }
             d3.select('#wtf .subtitle').html('Daily price development');
             d3.select('#wtf .price').html('&nbsp;');
         });
 });
-
-//d3.json('tru247.json', function (json) {
-//
-//    data = json;
-//
-//    createTiles();
-//    reColorTiles('all', 'all');
-//
-//    if (isOldBrowser() === false) {
-//        drawMobilePie('all');
-//    }
-//
-//    /* ************************** */
-//
-//    // State map click events
-//    //    d3.selectAll('#map path.state').on('click', function () {
-//    //        var $sel = d3.select('path.state.sel'),
-//    //            prevState, currState;
-//    //
-//    //        if ($sel.empty()) {
-//    //            prevState = '';
-//    //        } else {
-//    //            prevState = $sel.attr('id');
-//    //        }
-//    //
-//    //        currState = d3.select(this).attr('id');
-//    //
-//    //        if (prevState !== currState) {
-//    //            var type = d3.select('#type label.sel span').attr('class');
-//    //            reColorTiles(currState, type);
-//    //            drawMobilePie(currState);
-//    //        }
-//    //
-//    //        d3.selectAll('#map path.state').classed('sel', false);
-//    //        d3.select(this).classed('sel', true);
-//    //        d3.select('#show_all_states').classed('sel', false);
-//    //        d3.select('#wtf h2').html(states[currState].name);
-//    //        d3.select('fieldset#state label.sel').classed('sel', false);
-//    //        d3.select('fieldset#state label[for="state_' + currState + '"]').classed('sel', true);
-//    //    });
-//
-//    /* ************************** */
-//
-//    // All, PC, Mobile control event listener
-//    $('input[name="type"]').change(function () {
-//
-//        var type = $(this).val(),
-//            $sel = d3.select('#map path.state.sel');
-//
-//        d3.selectAll('fieldset#type label').classed('sel', false);
-//        d3.select('label[for="type_' + type + '"]').classed('sel', true);
-//
-//        if ($sel.empty()) {
-//            var state = 'all';
-//        } else {
-//            var state = $sel.attr('id');
-//        }
-//
-//        reColorTiles(state, type);
-//        d3.select('#pc2mob').attr('class', type);
-//
-//        var type = types[selectedType()];
-//        d3.select('#wtf .subtitle').html(type + ' traffic daily');
-//    });
-//
-//    /* ************************** */
-//
-//    // All States click
-//    $('label[for="state_all"]').click(function () {
-//
-//        d3.selectAll('fieldset#state label').classed('sel', false);
-//        $(this).addClass('sel');
-//        var type = d3.select('input[name="type"]').property('value');
-//
-//        d3.selectAll('#map path.state').classed('sel', false);
-//
-//        reColorTiles('all', type);
-//        drawMobilePie('all');
-//
-//        d3.select('#wtf h2').html('All States');
-//    });
-//
-//    /* ************************** */
-//
-//    // Text States list event listener
-//    $('input[name="state"]').change(function () {
-//
-//        var state = $(this).val(),
-//            type = d3.select('input[name="type"]').property('value');
-//
-//        d3.selectAll('fieldset#state label').classed('sel', false);
-//        d3.select('label[for="state_' + state + '"]').classed('sel', true);
-//
-//        reColorTiles(state, type);
-//        updateIE8percents(state);
-//    });
-//
-//    /* ************************** */
-//
-//    // tiles mouseover events
-//    $('#tiles td').hover(function () {
-//
-//        $(this).addClass('sel');
-//
-//        var tmp = $(this).attr('id').split('d').join('').split('h'),
-//            day = parseInt(tmp[0]),
-//            hour = parseInt(tmp[1]);
-//
-//        var $sel = d3.select('#map path.state.sel');
-//
-//        if ($sel.empty()) {
-//            var state = 'all';
-//        } else {
-//            var state = $sel.attr('id');
-//        }
-//
-//        var view = 'all';
-//
-//        if (isOldBrowser() === false) {
-//            drawHourlyChart(state, day);
-//            selectHourlyChartBar(hour);
-//        }
-//
-//        var type = types[selectedType()];
-//        d3.select('#wtf .subtitle').html(type + ' traffic on ' + days[day].name + 's');
-//
-//    }, function () {
-//
-//        $(this).removeClass('sel');
-//
-//        var $sel = d3.select('#map path.state.sel');
-//
-//        if ($sel.empty()) {
-//            var state = 'all';
-//        } else {
-//            var state = $sel.attr('id');
-//        }
-//        if (isOldBrowser() === false) {
-//            drawHourlyChart(state, 3);
-//        }
-//        var type = types[selectedType()];
-//        d3.select('#wtf .subtitle').html(type + ' traffic daily');
-//    });
-//});
 
 /* ************************** */
 
@@ -701,6 +559,7 @@ function reColorTiles(carrier) {
     if (isOldBrowser() === false) {
         drawHourlyChart(carrier, 0);
         drawMinMaxPriceChart(carrier, 0);
+        drawBucketChart(carrier, 0);
     }
 }
 
@@ -831,22 +690,6 @@ function drawHourlyChart(carrier, row) {
 /* ************************** */
 
 function drawMinMaxPriceChart(carrier, row) {
-    //    var chart = d3.select("#minmaxviz");
-    //
-    //    var cls = chart.attr('class');
-    //    console.log(cls);
-    //    var tmp = chart.attr('class').split('data-idx');
-    //    var oldRow = tmp.length === 0 ? '' : tmp[1];
-    //
-    //    console.log(row + " >> " + oldRow);
-    //
-    //    if (row == oldRow) {
-    //        // do nothing
-    //        console.log("no reason to change");
-    //    } else {
-    //        removeCurrentDataIndexClasses(chart);
-    //        redrawChart(carrier, row);
-    //    }
 
     drawMinMaxPriceChartById(carrier, row, 'minmax', 'viz1');
     //    drawMinMaxPriceChartById(carrier, row, 'minmax', 'viz2');
@@ -867,11 +710,6 @@ function drawMinMaxPriceChartById(carrier, row, divId, vizId) {
         return d.values[0].price;
     });
 
-    //    console.log(minPrice + " " + maxPrice);
-    //
-    //    var clsDataIndex = 'data-idx' + row;
-    //    chart.classed(clsDataIndex, true);
-
     var chartVizComp = vizuly.component.radial_progress(document.getElementById(vizId));
     var chartTheme = vizuly.theme.ffv(chartVizComp).skin(vizuly.skin.FFV_ALERT);
 
@@ -882,9 +720,6 @@ function drawMinMaxPriceChartById(carrier, row, divId, vizId) {
         .min(0)
         .max(maxPrice)
         .capRadius(0)
-        //        .on("mouseover", function (viz, d, i) {
-        //            console.log(viz);
-        //        })
         .startAngle(250) // Angle where progress bar starts
         .endAngle(110) // Angle where the progress bar stops
         .arcThickness(.16) // The thickness of the arc (ratio of radius)
@@ -899,7 +734,165 @@ function drawMinMaxPriceChartById(carrier, row, divId, vizId) {
     d3.select('#' + divId + ' .max').html('Maximum price CHF ' + maxPrice);
 }
 
+/* ************************** */
 
+function drawBucketChart(carrier, row) {
+    d3.selectAll('#buckets svg').remove();
+    var rowData = ffvData[carrier][row];
+
+    //    console.log(rowData);
+
+    var unnested = function (data, children) {
+        var out = [];
+        data.values.forEach(function (d, i) {
+            //            console.log(i, d);
+            d_keys = Object.keys(d);
+            //            console.log(i, d_keys)
+            values = d[children];
+
+            values.forEach(function (v) {
+                d_keys.forEach(function (k) {
+                    if (k != children) {
+                        v[k] = d[k]
+                    }
+                })
+                out.push(v);
+            })
+
+        })
+        return out;
+    }
+
+    var flattenedRowData = unnested(rowData, "values");
+    var binCounted = d3.nest()
+        .key(function (d) {
+            return d.bin;
+        })
+        .key(function (d) {
+            return d.price;
+        })
+        .rollup(function (leaves) {
+            return {
+                key: leaves[0].price.toString(),
+                bin: leaves[0].bin.toString(),
+                //                key: leaves.length,
+                size: leaves.length
+            };
+        })
+        .entries(flattenedRowData);
+
+    var binCountedWrapped = {
+        "key": "bins",
+        "values": binCounted
+    };
+    console.log(binCountedWrapped);
+
+    var data = {
+        "name": "flare",
+        "children": [
+            {
+                "id": "analytics",
+                "children": [
+                    {
+                        "id": "cluster",
+                        "children": [
+                            {
+                                "id": "AgglomerativeCluster",
+                                "size": 3938
+                        },
+                            {
+                                "id": "CommunityStructure",
+                                "size": 3812
+                        }
+                        ]
+                            },
+
+                    {
+                        "id": "optimization",
+                        "children": [
+                            {
+                                "id": "AspectRatioBanker",
+                                "size": 7074
+                        }
+     ]
+    }
+   ]
+  }
+ ]
+    };
+    //    console.log(data);
+
+    var width = 500,
+        height = 500;
+    var color = d3.scale.category20c();
+    var bucketColor = d3.scale.ordinal()
+        .domain(["1", "2", "3", "4", "5", "6", "7"])
+        .range(colorbrewer.BuGn[7]);
+
+    var treemap = d3.layout.treemap()
+        .padding(20)
+        .size([width, height])
+        .value(function (d) {
+            return d.values.size;
+        })
+        .children(function (d) {
+            return d.values;
+        });
+
+    var svg = d3.select("#buckets").append("svg")
+        .attr("width", width)
+        .attr("height", height)
+        .append("g")
+        .attr("transform", "translate(-.5,-.5)");
+
+
+    var cell = svg.data([binCountedWrapped]).selectAll("g")
+        .data(treemap.nodes)
+        .enter().append("g")
+        .attr("class", "cell")
+        .attr("transform", function (d) {
+            return "translate(" + d.x + "," + d.y + ")";
+        });
+
+    cell.append("rect")
+        .attr("width", function (d) {
+            return d.dx;
+        })
+        .attr("height", function (d) {
+            return d.dy;
+        })
+        .style("fill", function (d) {
+            console.log(d.values);
+            if (d.values.constructor === Array) {
+                if (d.key === 'bins') {
+                    return '#444';
+                } else {
+                    return bucketColor(d.key);
+                }
+            } else {
+                //                console.log("SFSFD");
+                //                return color(d.key);
+                return null;
+            }
+            //            return d.values ? color(d.key) : null;
+        });
+
+    cell.append("text")
+        .attr("x", function (d) {
+            //            return d.dx / 2;
+            return 20;
+        })
+        .attr("y", function (d) {
+            //            return d.dy / 2;
+            return 10;
+        })
+        .attr("dy", ".35em")
+        .attr("text-anchor", "middle")
+        .text(function (d) {
+            return d.key;
+        });
+
+}
 
 
 /* ************************** */

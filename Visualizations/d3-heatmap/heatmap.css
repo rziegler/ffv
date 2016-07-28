@@ -418,6 +418,15 @@ th.h48 {
     fill: #FFF;
 }
 
+#buckets {
+    clear: both;
+}
+
+#buckets rect {
+    fill: none;
+    stroke: #fff;
+}
+
 #header h1,
 #header p#subtitle {
     margin-left: 18px;
