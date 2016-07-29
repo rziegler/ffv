@@ -267,7 +267,7 @@ th.h48 {
 
 #wtf {
     float: right;
-    width: 515px;
+    width: 550px;
     margin-left: 32px;
 }
 
@@ -372,13 +372,13 @@ th.h48 {
 }
 
 #hourly_values {
-    float: right;
-    width: 550px;
+    /*    float: right;*/
+    /*    width: 750px;*/
 }
 
 #hourly_values svg {
     width: 750px;
-    height: 170px
+    height: 170px;
 }
 
 #hourly_values svg rect {
@@ -422,9 +422,19 @@ th.h48 {
     clear: both;
 }
 
+#buckets svg {
+    width: 550px;
+    height: 250px;
+}
+
 #buckets rect {
     fill: none;
-    stroke: #fff;
+    stroke: #FFF;
+    stroke-width: 3px;
+}
+
+#buckets text {
+    fill: #444;
 }
 
 #header h1,
@@ -592,6 +602,68 @@ html.ie8 #ie8_percents,
 
 .grn .q7-7 {
     background: #005824;
+}
+
+
+/* 7 buckets YlOrRd (from colorbrewer 9-class YlOrRd without the 2 lightest colors) */
+
+.ylrd .q1-7 {
+    background: #fed976;
+}
+
+.ylrd .q2-7 {
+    background: #feb24c;
+}
+
+.ylrd .q3-7 {
+    background: #fd8d3c;
+}
+
+.ylrd .q4-7 {
+    background: #fc4e2a;
+}
+
+.ylrd .q5-7 {
+    background: #e31a1c;
+}
+
+.ylrd .q6-7 {
+    background: #bd0026;
+}
+
+.ylrd .q7-7 {
+    background: #800026;
+}
+
+
+/* 7 buckets YlOrRd (from colorbrewer 9-class YlOrRd without the 2 lightest colors) */
+
+.orrd .q1-7 {
+    background: #fdd49e;
+}
+
+.orrd .q2-7 {
+    background: #fdbb84;
+}
+
+.orrd .q3-7 {
+    background: #fc8d59;
+}
+
+.orrd .q4-7 {
+    background: #ef6548;
+}
+
+.orrd .q5-7 {
+    background: #d7301f;
+}
+
+.orrd .q6-7 {
+    background: #b30000;
+}
+
+.orrd .q7-7 {
+    background: #7f0000;
 }
 
 

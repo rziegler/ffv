@@ -21,8 +21,7 @@ if (isOldBrowser()) {
 }
 
 var buckets = 7; // was 11
-var colorScheme = 'grn';
-
+var colorScheme = 'orrd'; // 'grn' 'ylrd'
 
 var destinations = d3.map([
     {
@@ -648,7 +647,7 @@ function drawHourlyChart(carrier, row) {
         .append('svg:svg')
         .attr('class', 'chart')
         .attr('width', 300)
-        .attr('height', 170);
+        .attr('height', h + 20); // + 20 for the scale below the chart
 
     var rect = chart.selectAll('rect'),
         text = chart.selectAll('text');
@@ -822,15 +821,17 @@ function drawBucketChart(carrier, row) {
     };
     //    console.log(data);
 
-    var width = 500,
-        height = 500;
+    var width = 550,
+        height = 250;
     var color = d3.scale.category20c();
     var bucketColor = d3.scale.ordinal()
-        .domain(["1", "2", "3", "4", "5", "6", "7"])
-        .range(colorbrewer.BuGn[7]);
+        .domain(["-1", "0", "1", "2", "3", "4", "5", "6", "7"]) // two dummy-elements -1 and 0 so that the 9-color scale is only using the topmost 7 colors
+        .range(colorbrewer.OrRd[9]);
 
     var treemap = d3.layout.treemap()
-        .padding(20)
+        //        .mode('slice-dice')
+        .mode('squarify')
+        .padding(10)
         .size([width, height])
         .value(function (d) {
             return d.values.size;
@@ -865,31 +866,39 @@ function drawBucketChart(carrier, row) {
             console.log(d.values);
             if (d.values.constructor === Array) {
                 if (d.key === 'bins') {
-                    return '#444';
+                    return '#FFF';
                 } else {
                     return bucketColor(d.key);
                 }
             } else {
-                //                console.log("SFSFD");
-                //                return color(d.key);
-                return null;
+                //                return null;
+                return '#FFF';
             }
-            //            return d.values ? color(d.key) : null;
+        })
+        .style("fill-opacity", function (d) {
+            if (d.values.constructor === Array) {
+                return "1.0";
+            } else {
+                return "0.8";
+            }
+
         });
 
     cell.append("text")
         .attr("x", function (d) {
-            //            return d.dx / 2;
-            return 20;
+            return d.dx / 2;
         })
         .attr("y", function (d) {
-            //            return d.dy / 2;
-            return 10;
+            return d.dy / 2;
         })
-        .attr("dy", ".35em")
+        .attr("dy", ".25em")
         .attr("text-anchor", "middle")
         .text(function (d) {
-            return d.key;
+            if (d.values.constructor === Array) {
+                return null; // no text for intermediate nodes
+            } else {
+                return d.key; // leave nodes present text
+            }
         });
 
 }
