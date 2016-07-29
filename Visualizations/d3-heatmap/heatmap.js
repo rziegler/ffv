@@ -706,13 +706,23 @@ function drawMinMaxPriceChartById(carrier, row, deltaTime, divId, vizId) {
         return d.values[0].price;
     });
     var currentPrice = rowData.values[deltaTime].values[0].price;
-    console.log(currentPrice);
     var maxPrice = d3.max(rowData.values, function (d) {
         return d.values[0].price;
     });
 
+    var savedPricePercent = (1 - currentPrice / maxPrice) * 100;
+
+
     var chartVizComp = vizuly.component.radial_progress(document.getElementById(vizId));
-    var chartTheme = vizuly.theme.ffv(chartVizComp).skin(vizuly.skin.FFV_ALERT);
+
+    if (savedPricePercent === 0) {
+        // use theme with track_fill WHITE
+        var chartTheme = vizuly.theme.ffv(chartVizComp).skin(vizuly.skin.FFV_ALERT_ZERO);
+    } else {
+        var chartTheme = vizuly.theme.ffv(chartVizComp).skin(vizuly.skin.FFV_ALERT);
+    }
+
+
 
     chartVizComp.data(maxPrice + currentPrice) // Current value
         .width(w)
@@ -726,8 +736,7 @@ function drawMinMaxPriceChartById(carrier, row, deltaTime, divId, vizId) {
         .arcThickness(.16) // The thickness of the arc (ratio of radius)
         .duration(0)
         .label(function (d, i) {
-            var percentSaved = (1 - currentPrice / maxPrice) * 100;
-            return d3.format(".2f")(percentSaved) + '%';
+            return d3.format(".2f")(savedPricePercent) + '%';
         })
         .update();
 

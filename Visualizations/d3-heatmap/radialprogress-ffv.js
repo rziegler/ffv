@@ -27,20 +27,23 @@ vizuly.theme.ffv = function (viz) {
             // Each skin can also have a **CSS class** with styles that don't need to be changed dynamically by the theme directly.
             class: "vz-skin-alert" // CSS Class that it will apply to the viz object output.
         },
-        White: {
-            name: "White",
-            label_color: "#FFF",
-            track_fill: null,
+        AlertZero: {
+            name: "Alert", // Skin Name
+            label_color: "#444", // Color of the center label
+            track_fill: "#FFF", // Color of the background 'track' of the progress bar
+            progress_colors: ["#444", "#999"], // Colors used for progress bar
             arc_fill: function (d, i) {
-                return "#FFF";
+                return this.progress_colors[i % 2]; // Dynamic function that returns a fill based on the index value
             },
             arc_fill_opacity: function (d, i) {
-                return .85 / Math.exp(i * .75);
+                return 1; // Dynamic function that returns opacity (in this case it is 1, but the WHITE skin uses a dynamic opacity
             },
             arc_stroke: function (d, i) {
-                return "#FFF";
+                //                return this.progress_colors[i % 2]; // Dynamic function that returns stroke color based on index
+                return null;
             },
-            class: "vz-skin-white"
+            // Each skin can also have a **CSS class** with styles that don't need to be changed dynamically by the theme directly.
+            class: "vz-skin-alert" // CSS Class that it will apply to the viz object output.
         }
     }
 
@@ -201,7 +204,7 @@ vizuly.theme.ffv = function (viz) {
 
 // We keep our skins declared as **constants** so we can easily reference them in other functions
 vizuly.skin.FFV_ALERT = "Alert";
-vizuly.skin.FFV_WHITE = "White";
+vizuly.skin.FFV_ALERT_ZERO = "AlertZero";
 
 
 // And that is pretty much it.  This is a pretty simple theme, some of the other vizuly components implement more
