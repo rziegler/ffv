@@ -393,7 +393,7 @@ d3.csv("data/data-dest-mad-small.csv", function (d) {
             if (isOldBrowser() === false) {
                 drawHourlyChart(carrier, dataIdx);
                 selectHourlyChartBar(deltaTime);
-                drawMinMaxPriceChart(carrier, dataIdx);
+                drawMinMaxPriceChart(carrier, dataIdx, deltaTime);
                 drawBucketChart(carrier, dataIdx);
             }
 
@@ -419,7 +419,7 @@ d3.csv("data/data-dest-mad-small.csv", function (d) {
             }
             if (isOldBrowser() === false) {
                 drawHourlyChart(carrier, 0);
-                drawMinMaxPriceChart(carrier, 0);
+                drawMinMaxPriceChart(carrier, 0, 0);
                 drawBucketChart(carrier, 0);
             }
             d3.select('#wtf .subtitle').html('Daily price development');
@@ -557,7 +557,7 @@ function reColorTiles(carrier) {
     flipTiles();
     if (isOldBrowser() === false) {
         drawHourlyChart(carrier, 0);
-        drawMinMaxPriceChart(carrier, 0);
+        drawMinMaxPriceChart(carrier, 0, 0);
         drawBucketChart(carrier, 0);
     }
 }
@@ -688,13 +688,13 @@ function drawHourlyChart(carrier, row) {
 
 /* ************************** */
 
-function drawMinMaxPriceChart(carrier, row) {
+function drawMinMaxPriceChart(carrier, row, deltaTime) {
 
-    drawMinMaxPriceChartById(carrier, row, 'minmax', 'viz1');
+    drawMinMaxPriceChartById(carrier, row, deltaTime, 'minmax', 'viz1');
     //    drawMinMaxPriceChartById(carrier, row, 'minmax', 'viz2');
 }
 
-function drawMinMaxPriceChartById(carrier, row, divId, vizId) {
+function drawMinMaxPriceChartById(carrier, row, deltaTime, divId, vizId) {
     var chart = d3.select("#" + vizId);
     d3.selectAll('#' + vizId + ' div').remove();
 
@@ -705,6 +705,8 @@ function drawMinMaxPriceChartById(carrier, row, divId, vizId) {
     var minPrice = d3.min(rowData.values, function (d) {
         return d.values[0].price;
     });
+    var currentPrice = rowData.values[deltaTime].values[0].price;
+    console.log(currentPrice);
     var maxPrice = d3.max(rowData.values, function (d) {
         return d.values[0].price;
     });
@@ -712,7 +714,7 @@ function drawMinMaxPriceChartById(carrier, row, divId, vizId) {
     var chartVizComp = vizuly.component.radial_progress(document.getElementById(vizId));
     var chartTheme = vizuly.theme.ffv(chartVizComp).skin(vizuly.skin.FFV_ALERT);
 
-    chartVizComp.data(maxPrice + minPrice) // Current value
+    chartVizComp.data(maxPrice + currentPrice) // Current value
         .width(w)
         .height(h)
         .radius(w / 2.2)
@@ -724,13 +726,14 @@ function drawMinMaxPriceChartById(carrier, row, divId, vizId) {
         .arcThickness(.16) // The thickness of the arc (ratio of radius)
         .duration(0)
         .label(function (d, i) {
-            var percentSaved = (1 - minPrice / maxPrice) * 100;
-            return '-' + d3.format(".2f")(percentSaved) + '%';
+            var percentSaved = (1 - currentPrice / maxPrice) * 100;
+            return d3.format(".2f")(percentSaved) + '%';
         })
         .update();
 
     d3.select('#' + divId + ' .min').html('Minimum price CHF ' + minPrice);
     d3.select('#' + divId + ' .max').html('Maximum price CHF ' + maxPrice);
+    d3.select('#' + divId + ' .cur').html('Current price CHF ' + currentPrice);
 }
 
 /* ************************** */
@@ -738,8 +741,6 @@ function drawMinMaxPriceChartById(carrier, row, divId, vizId) {
 function drawBucketChart(carrier, row) {
     d3.selectAll('#buckets svg').remove();
     var rowData = ffvData[carrier][row];
-
-    //    console.log(rowData);
 
     var unnested = function (data, children) {
         var out = [];
@@ -757,7 +758,6 @@ function drawBucketChart(carrier, row) {
                 })
                 out.push(v);
             })
-
         })
         return out;
     }
@@ -900,9 +900,7 @@ function drawBucketChart(carrier, row) {
                 return d.key; // leave nodes present text
             }
         });
-
 }
-
 
 /* ************************** */
 
