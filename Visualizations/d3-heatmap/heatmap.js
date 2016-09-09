@@ -197,7 +197,7 @@ addDestinationButtons();
 
 d3.select('#vis').classed(colorScheme, true);
 
-d3.csv("data/data-dest-mad-small.csv", function (d) {
+d3.csv("data/data-dest-mad.csv", function (d) {
     return {
         destination: d.destination,
         origin: d.origin,
@@ -620,6 +620,7 @@ function flipTiles() {
             for (var t = 0; t < obj.maxFlightsOnDate; t++) {
                 var side = d3.select('#tiles').attr('class');
                 setTimeout(flipper(h, t, d, side), (h * 20) + (d * 20) + (Math.random() * 100));
+                //                flipper(h, t, d, side);
             }
         }
     }

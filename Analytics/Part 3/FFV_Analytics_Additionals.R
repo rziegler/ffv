@@ -43,26 +43,7 @@ data.destinations <- data.destinations %>%
   )
 
 destinationCodes <- c(
-"AMS",
-"BEG",
-"BKK",
-"BOM",
-"DXB",
-"GRU",
-"ICN",
-"IST",
-"JFK",
-"KEF",
-"LHR",
-"MAD",
-"MLA",
-"NRT",
-"PEK",
-"RHO",
-"RIX",
-"SIN",
-"SVO",
-"YYZ"
+ 
 )
 
 destinationNames <- c(

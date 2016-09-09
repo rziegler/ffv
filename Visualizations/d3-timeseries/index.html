@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Timeseries</title>
+    <link rel="shortcut icon" type="image/png" href="images/favicon.png" />
+
+    <link rel="stylesheet" href="resources/default.css" />
+    <link rel="stylesheet" href="style.css" />
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.1.0/lodash.min.js"></script>
+    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment.min.js"></script>
+    <!--<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js"></script>-->
+
+    <script src="timeseries.js"></script>
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="timeseries one"></div>
+
+        <div class="timeseries two"></div>
+
+    </div>
+
+    <script>
+        window.onload = function () {
+            /* Generate random times between two dates */ function getData(start, end, amount) { var data = []; for (i = 0; i < amount; i++) { data.push({ 'value': (randomDate(start, end)) }) } return data; } function randomDate(start, end) { return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime())).valueOf(); } var amount=1 00; if (window.innerWidth < 800) amount=3 0; /* Create timeseries */ timeseries( 'timeseries one', getData(new Date(2012, 1, 1), new Date(2015, 1, 2), amount), true); timeseries( 'timeseries two', getData(new Date(2015, 1, 1), new Date(2015, 1, 2), amount), false);
+        }
+    </script>
+</body>
+
+</html>

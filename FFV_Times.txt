@@ -29,9 +29,32 @@ Aufwände in Stunden
 26.06.	4h		Processing Viz
 27.06.	
 
+--> 68h
 ... ?
 
 18.07.	3h		Processing Viz Sketches
 21.07.	3h		Processing Viz Sketches
 22.07.	8h		Processing Viz Sketches
 23.07.	4h		D3
+27.07.	8h		D3
+28.07.	8h		D3
+29.07.	8h		D3
+30.07.	
+--> 110h
+
+02.08.	2h		D3
+03.08.	3h		D3
+04.08.	2h		D3 -> Umbau auf SVG
+05.08.	4h		D3 -> Umbau auf SVG
+07.08.	6h		Page
+08.08.	2h		Page
+09.08.	2h		Page
+11.08.	1h		Page
+--> 132h
+
+20.08.	4h		Page
+21.08.	4h		Page
+27.08.	8h		View3
+28.08.	8h		View3
+29.08.	2h		View3
+--> 158h = ~ 20d
