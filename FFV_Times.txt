@@ -58,3 +58,9 @@ Aufwände in Stunden
 28.08.	8h		View3
 29.08.	2h		View3
 --> 158h = ~ 20d
+
+03.09.	4h		Single Page
+04.09.	8h		Single Page, All Responsive
+05.09.	4h		Typo Viz
+07.09.	4h		Dokumentation
+09.09.	8h		Dokumentation
