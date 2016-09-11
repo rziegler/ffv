@@ -22,4 +22,7 @@ DBs/*.csv
 Neuerungen_Sommerflugplan_2016.pdf
 Sommerflugplan_2016.pdf
 Weltkarte_1617.pdf
-data-dest-*.csv
+Visualizations/d3-heatmap/data/data*.csv
+Visualizations/scroll_demo
+tmp/starter-template
+starter-template.zip
