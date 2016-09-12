@@ -32,6 +32,7 @@ Aufwände in Stunden
 --> 68h
 ... ?
 
+15.07.	4h		Sketching
 18.07.	3h		Processing Viz Sketches
 21.07.	3h		Processing Viz Sketches
 22.07.	8h		Processing Viz Sketches
@@ -61,6 +62,15 @@ Aufwände in Stunden
 
 03.09.	4h		Single Page
 04.09.	8h		Single Page, All Responsive
+
 05.09.	4h		Typo Viz
+06.09.	2h		Typo Viz
 07.09.	4h		Dokumentation
 09.09.	8h		Dokumentation
+10.09.	2h		Doku
+11.09.	2h		Doku
+11.09.	6h		Typo Vis
+
+-- zu übertragen in Doku-Vis
+
+
