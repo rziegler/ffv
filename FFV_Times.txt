@@ -71,6 +71,9 @@ Aufwände in Stunden
 11.09.	2h		Doku
 11.09.	6h		Typo Vis
 
+kw 37
+12.09.	4h		Doku
+
 -- zu übertragen in Doku-Vis
 
 
