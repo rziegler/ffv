@@ -73,6 +73,8 @@ Aufwände in Stunden
 
 kw 37
 12.09.	4h		Doku
+13.09.	1h		Responsive
+14.09.	4h		Exhibition
 
 -- zu übertragen in Doku-Vis
 
