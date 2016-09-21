@@ -76,6 +76,16 @@ kw 37
 13.09.	1h		Responsive
 14.09.	4h		Exhibition
 
+15.09.	6h		Doku, Exhibition
+15.09.	2h		Coding
+18.09.	4h		Exhibition
+
+kw38 ab mo
+19.09.	1h		Coding
+19.09.	2h		Exhibition
+20.09.	3h		Doku
 -- zu übertragen in Doku-Vis
+
+21.09.	2h		Doku
 
 
